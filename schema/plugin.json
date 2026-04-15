@@ -1,0 +1,25 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "jupyter.lab.toolbars": {
+    "Notebook": [
+      {
+        "name": "branding",
+        "type": "label",
+        "label": "e²x",
+        "caption": "e²xgrader-lecturer",
+        "rank": 1
+      }
+    ]
+  },
+  "jupyter.lab.internationalization": {
+    "selectors": [
+        "jupyter.lab.toolbars/.*/label"
+    ],
+    "domain": "e2xgrader_lecturer"
+  },
+  "title": "@e2xgrader/lecturer",
+  "description": "@e2xgrader/lecturer settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}
