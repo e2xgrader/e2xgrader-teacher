@@ -1,5 +1,5 @@
 {
   "packageManager": "python",
-  "packageName": "e2xgrader_lecturer",
-  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package e2xgrader_lecturer"
+  "packageName": "e2xgrader_teacher",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package e2xgrader_teacher"
 }

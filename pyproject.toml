@@ -3,7 +3,7 @@ requires = ["hatchling>=1.5.0", "jupyterlab>=4.0.0,<5", "hatch-nodejs-version>=0
 build-backend = "hatchling.build"
 
 [project]
-name = "e2xgrader_lecturer"
+name = "e2xgrader_teacher"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
@@ -33,31 +33,31 @@ source = "nodejs"
 fields = ["description", "authors", "urls", "keywords"]
 
 [project.entry-points."jupyterlab.locale"]
-e2xgrader_lecturer = "e2xgrader_lecturer"
+e2xgrader_teacher = "e2xgrader_teacher"
 
 [tool.hatch.build.targets.sdist]
 artifacts = [
-    "e2xgrader_lecturer/labextension",
-    "e2xgrader_lecturer/locale/**/*.json",
-    "e2xgrader_lecturer/locale/**/*.mo"
+    "e2xgrader_teacher/labextension",
+    "e2xgrader_teacher/locale/**/*.json",
+    "e2xgrader_teacher/locale/**/*.mo"
 ]
 exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"e2xgrader_lecturer/labextension" = "share/jupyter/labextensions/@e2xgrader/lecturer"
-"install.json" = "share/jupyter/labextensions/@e2xgrader/lecturer/install.json"
+"e2xgrader_teacher/labextension" = "share/jupyter/labextensions/@e2xgrader/teacher"
+"install.json" = "share/jupyter/labextensions/@e2xgrader/teacher/install.json"
 
 [tool.hatch.build.hooks.version]
-path = "e2xgrader_lecturer/_version.py"
+path = "e2xgrader_teacher/_version.py"
 
 [tool.hatch.build.hooks.jupyter-builder]
 dependencies = ["hatch-jupyter-builder>=0.5"]
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
-    "e2xgrader_lecturer/labextension/static/style.js",
-    "e2xgrader_lecturer/labextension/package.json",
+    "e2xgrader_teacher/labextension/static/style.js",
+    "e2xgrader_teacher/labextension/package.json",
 ]
-skip-if-exists = ["e2xgrader_lecturer/labextension/static/style.js"]
+skip-if-exists = ["e2xgrader_teacher/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 build_cmd = "build:prod"
@@ -67,7 +67,7 @@ npm = ["jlpm"]
 build_cmd = "install:extension"
 npm = ["jlpm"]
 source_dir = "src"
-build_dir = "e2xgrader_lecturer/labextension"
+build_dir = "e2xgrader_teacher/labextension"
 
 [tool.jupyter-releaser.options]
 version_cmd = "hatch version"

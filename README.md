@@ -1,8 +1,8 @@
-# e2xgrader_lecturer
+# e2xgrader_teacher
 
-[![Github Actions Status](https://github.com/e2xgrader/e2xgrader-lecturer/workflows/Build/badge.svg)](https://github.com/e2xgrader/e2xgrader-lecturer/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/e2xgrader/e2xgrader-teacher/workflows/Build/badge.svg)](https://github.com/e2xgrader/e2xgrader-teacher/actions/workflows/build.yml)
 
-A JupyterLab extension for e2xgrader lecturer mode
+A JupyterLab extension for e2xgrader teacher mode
 
 ## Requirements
 
@@ -13,7 +13,7 @@ A JupyterLab extension for e2xgrader lecturer mode
 To install the extension, execute:
 
 ```bash
-pip install e2xgrader_lecturer
+pip install e2xgrader_teacher
 ```
 
 ## Uninstall
@@ -21,7 +21,7 @@ pip install e2xgrader_lecturer
 To remove the extension, execute:
 
 ```bash
-pip uninstall e2xgrader_lecturer
+pip uninstall e2xgrader_teacher
 ```
 
 ## Contributing
@@ -36,7 +36,7 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the e2xgrader_lecturer directory
+# Change directory to the e2xgrader_teacher directory
 
 # Set up a virtual environment and install package in development mode
 python -m venv .venv
@@ -72,12 +72,12 @@ jupyter lab build --minimize=False
 ### Development uninstall
 
 ```bash
-pip uninstall e2xgrader_lecturer
+pip uninstall e2xgrader_teacher
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `@e2xgrader/lecturer` within that folder.
+folder is located. Then you can remove the symlink named `@e2xgrader/teacher` within that folder.
 
 ### Testing the extension
 

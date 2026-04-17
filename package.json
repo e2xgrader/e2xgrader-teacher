@@ -1,15 +1,15 @@
 {
-    "name": "@e2xgrader/lecturer",
+    "name": "@e2xgrader/teacher",
     "version": "0.1.0",
-    "description": "A JupyterLab extension for e2xgrader lecturer mode",
+    "description": "A JupyterLab extension for e2xgrader teacher mode",
     "keywords": [
         "jupyter",
         "jupyterlab",
         "jupyterlab-extension"
     ],
-    "homepage": "https://github.com/e2xgrader/e2xgrader-lecturer",
+    "homepage": "https://github.com/e2xgrader/e2xgrader-teacher",
     "bugs": {
-        "url": "https://github.com/e2xgrader/e2xgrader-lecturer/issues"
+        "url": "https://github.com/e2xgrader/e2xgrader-teacher/issues"
     },
     "license": "BSD-3-Clause",
     "author": {
@@ -27,7 +27,7 @@
     "style": "style/index.css",
     "repository": {
         "type": "git",
-        "url": "https://github.com/e2xgrader/e2xgrader-lecturer.git"
+        "url": "https://github.com/e2xgrader/e2xgrader-teacher.git"
     },
     "scripts": {
         "build": "jlpm build:lib && jlpm build:labextension:dev",
@@ -39,7 +39,7 @@
         "clean": "jlpm clean:lib",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
-        "clean:labextension": "rimraf e2xgrader_lecturer/labextension e2xgrader_lecturer/_version.py",
+        "clean:labextension": "rimraf e2xgrader_teacher/labextension e2xgrader_teacher/_version.py",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
         "eslint": "jlpm eslint:check --fix",
         "eslint:check": "eslint . --cache --ext .ts,.tsx",
@@ -100,7 +100,7 @@
     },
     "jupyterlab": {
         "extension": true,
-        "outputDir": "e2xgrader_lecturer/labextension",
+        "outputDir": "e2xgrader_teacher/labextension",
         "schemaDir": "schema"
     },
     "eslintIgnore": [

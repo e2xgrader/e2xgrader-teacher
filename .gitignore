@@ -7,9 +7,9 @@ node_modules/
 *.egg-info/
 .ipynb_checkpoints
 *.tsbuildinfo
-e2xgrader_lecturer/labextension
+e2xgrader_teacher/labextension
 # Version file is handled by hatchling
-e2xgrader_lecturer/_version.py
+e2xgrader_teacher/_version.py
 
 # Integration tests
 ui-tests/test-results/

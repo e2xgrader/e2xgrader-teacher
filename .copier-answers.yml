@@ -7,9 +7,9 @@ has_ai_rules: false
 has_binder: false
 has_settings: true
 kind: frontend
-labextension_name: '@e2xgrader/lecturer'
-project_short_description: A JupyterLab extension for e2xgrader lecturer mode
-python_name: e2xgrader_lecturer
-repository: https://github.com/e2xgrader/e2xgrader-lecturer
+labextension_name: '@e2xgrader/teacher'
+project_short_description: A JupyterLab extension for e2xgrader teacher mode
+python_name: e2xgrader_teacher
+repository: https://github.com/e2xgrader/e2xgrader-teacher
 test: true
 

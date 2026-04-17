@@ -6,19 +6,24 @@
         "name": "branding",
         "type": "label",
         "label": "e²x",
-        "caption": "e²xgrader-lecturer",
+        "caption": "e²xgrader-teacher",
         "rank": 1
+      }
+    ],
+    "NotebookSecondary": [
+      {
+        "name": "test",
+        "type": "label",
+        "label": "test"
       }
     ]
   },
   "jupyter.lab.internationalization": {
-    "selectors": [
-        "jupyter.lab.toolbars/.*/label"
-    ],
-    "domain": "e2xgrader_lecturer"
+    "selectors": ["jupyter.lab.toolbars/.*/label"],
+    "domain": "e2xgrader_teacher"
   },
-  "title": "@e2xgrader/lecturer",
-  "description": "@e2xgrader/lecturer settings.",
+  "title": "@e2xgrader/teacher",
+  "description": "@e2xgrader/teacher settings.",
   "type": "object",
   "properties": {},
   "additionalProperties": false
