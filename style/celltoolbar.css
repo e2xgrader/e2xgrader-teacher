@@ -1,0 +1,65 @@
+.jp-Cell-header {
+  height: auto;
+}
+
+.e2xgrader-TeacherCellToolbar {
+  padding: calc(0.2 * var(--jp-private-toolbar-height));
+  min-height: auto;
+  width: 100%;
+
+  input, select{
+    border-radius: var(--jp-border-radius);
+    background-color: white;
+    border: var(--jp-border-width) solid var(--jp-border-color0);
+  }
+
+  .jp-Toolbar-item[data-jp-item-name="points"]{
+    margin-left: auto;
+  }
+}
+
+.e2xgrader-CellLabel {
+  display: flex;
+  align-items: center;
+}
+
+.e2xgrader-Spacer {
+  flex-grow: 1;
+}
+
+.e2xgrader-CellToolbar {
+  box-shadow: none;
+  border: var(--jp-border-width) solid var(--jp-border-color1);
+  border-bottom: none;
+}
+
+.e2xgrader-TaskName {
+  margin-left: 5px;
+}
+
+.e2xgrader-Points {
+  margin-left: auto;
+  >input {
+    max-width: calc(4ch + 20px);
+  }
+}
+
+.e2xgrader-SolutionCell {
+  background: var(--jp-brand-color1);
+  color: white;
+}
+
+.e2xgrader-ReadOnlyCell {
+  background: var(--jp-layout-color2);
+}
+
+.jp-mod-selected
+  > .jp-Cell-inputWrapper
+  > .jp-Cell-inputArea
+  > .jp-MarkdownOutput {
+  border: var(--jp-border-width) solid var(--jp-cell-editor-active-border-color);
+}
+
+.jp-RenderedMarkdown {
+  border: var(--jp-border-width) solid #ddd;
+}
