@@ -1,6 +1,6 @@
 import {
-  E2xGraderCellToolbar, E2xGraderCellRegistry, NbgraderCellType, NbgraderCellTypes, NbgraderMetadata,
-  GradingCellModel, E2xGraderMetadata
+  E2xGraderCellToolbar, E2xGraderCellRegistry,
+  GradingCellModel
 } from '@e2xgrader/core';
 import { Toolbar, lockIcon } from '@jupyterlab/ui-components';
 import CellTypeSelector from "./CellTypeSelector";
@@ -9,6 +9,7 @@ import TaskNameInput from "./TaskNameInput";
 import PointsInput from "./PointsInput";
 import {Message} from "@lumino/messaging";
 import TaskLink from "./TaskLink";
+import {Notebook} from "@jupyterlab/notebook";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
@@ -66,20 +67,7 @@ export namespace TeacherCellToolbar {
   export class TypeSelector extends E2xGraderCellToolbar.ToolbarElement {
     setCellType(newType: string): void{
       if(this.gradingCellModel) {
-        if((Object.values(NbgraderCellType) as string[]).includes(newType)) {
-          this.gradingCellModel.setNbgraderMetadataKey('cell_type', newType);
-          this.gradingCellModel.setMetadata(E2xGraderMetadata.E2XGRADER_METADATA_KEY, E2xGraderMetadata.E2X_METADATA_DEFAULTS);
-          this.gradingCellModel.setMetadata(NbgraderMetadata.NBGRADER_METADATA_KEY, NbgraderCellTypes.cellTypeConfigurations[newType as NbgraderCellType]);
-          if(this.gradingCellModel.isSolution && !this.gradingCellModel.nbgraderMetadata?.task_name){
-            this.gradingCellModel.setNbgraderMetadataKey('task_name', NbgraderMetadata.getRandomTaskName());
-          }
-        }else if(this.cellRegistry?.getPluginTypes().includes(newType)) {
-          this.gradingCellModel.setMetadata('extended_cell', (this.cellRegistry.getPlugin(newType) as E2xGraderCellRegistry.IE2xGraderCellPlugin).cleanMetadata);
-          this.gradingCellModel.setMetadata(NbgraderMetadata.NBGRADER_METADATA_KEY, NbgraderCellTypes.cellTypeConfigurations['manual']);
-          this.gradingCellModel.setNbgraderMetadataKey('cell_type', undefined); //TODO verify if this is intended
-        }else {
-          this.gradingCellModel.removeNbgraderMetadata();
-        }
+        this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
       }
       this.update();
       this.parent?.update();
@@ -100,19 +88,20 @@ export namespace TeacherCellToolbar {
 
     renderElement(): React.JSX.Element {
       return this.gradingCellModel?.isSolution ? ( <div className="e2xgrader-TaskName">
-        <TaskNameInput initialName={this.gradingCellModel?.nbgraderMetadata?.['task_name'] ?? ''} onChange={e => this.setTaskName(e)} />
+        <TaskNameInput initialName={this.gradingCellModel?.taskName ?? ''} onChange={e => this.setTaskName(e)} />
       </div>) : (<></>);
     }
   }
 
   export class CellPointsInput extends E2xGraderCellToolbar.ToolbarElement {
     setPoints(newPoints: number): void{
-      this.gradingCellModel?.setNbgraderMetadataKey('points', newPoints);
+      if(!this.gradingCellModel) return;
+      this.gradingCellModel.points = newPoints;
     }
 
     renderElement(): React.JSX.Element {
       return this.gradingCellModel?.isManualGradingCell || this.gradingCellModel?.isAutograderTest ? ( <div className="e2xgrader-Points">
-        <label>Points: </label><PointsInput initialPoints={this.gradingCellModel?.nbgraderMetadata?.['points'] ?? 0} onChange={e => this.setPoints(e)} />
+        <label>Points: </label><PointsInput initialPoints={this.gradingCellModel?.nbgraderMetadata?.points ?? 0} onChange={e => this.setPoints(e)} />
       </div>) : (<></>);
     }
   }
@@ -123,8 +112,10 @@ export namespace TeacherCellToolbar {
     }
 
     renderElement(): React.JSX.Element {
+      console.log('notebook cells', (this.cell?.parent as Notebook).widgets[0].model);
+
       return this.gradingCellModel && (this.gradingCellModel?.isDescription || this.gradingCellModel?.isAutograderTest) ? (<div className="e2xgrader-TaskLink">
-        <TaskLink initiallyLinkedTask={this.gradingCellModel?.nbgraderMetadata?.['for']} onChange={e => this.setLinkedTaskId(e)} gradingCells={this.gradingCells} />
+        <TaskLink initiallyLinkedTask={this.gradingCellModel?.for} onChange={e => this.setLinkedTaskId(e)} gradingCells={this.gradingCells} />
       </div>) : (<></>);
     }
   }
