@@ -9,7 +9,7 @@ import { E2xGraderCellRegistry } from '@e2xgrader/core';
 import {
   IToolbarWidgetRegistry
 } from '@jupyterlab/apputils';
-import { ITranslator } from '@jupyterlab/translation';
+import {ITranslator, nullTranslator} from '@jupyterlab/translation';
 
 /**
  * Initialization data for the @e2xgrader/teacher extension.
@@ -20,15 +20,19 @@ const cellFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
     description: 'A JupyterLab extension for e2xgrader teacher mode',
     autoStart: true,
     requires: [IEditorServices, E2xGraderCellRegistry.IE2xGraderCellRegistry],
+    optional: [ITranslator],
     provides: NotebookPanel.IContentFactory,
     activate: (
       _app: JupyterFrontEnd,
       editorServices: IEditorServices,
-      cellRegistry: E2xGraderCellRegistry.IE2xGraderCellRegistry
+      cellRegistry: E2xGraderCellRegistry.IE2xGraderCellRegistry,
+      translator: ITranslator
     ) => {
       console.log(
         'JupyterLab extension @e2xgrader/teacher:plugin is activated!'
       );
+
+      const trans = (translator ?? nullTranslator).load('e2xgrader_teacher');
 
       const editorFactory = editorServices.factoryService.newInlineEditor;
       const contentFactory = new E2XContentFactoryTeacher(
@@ -36,7 +40,8 @@ const cellFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
           editorFactory
         },
         undefined,
-        cellRegistry
+        cellRegistry,
+        trans
       );
       return contentFactory;
     }

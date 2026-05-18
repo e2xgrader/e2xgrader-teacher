@@ -3,29 +3,30 @@ import {
   GradingCellModel
 } from '@e2xgrader/core';
 import { Toolbar, lockIcon } from '@jupyterlab/ui-components';
+import { showDialog, Dialog } from '@jupyterlab/apputils';
 import CellTypeSelector from "./CellTypeSelector";
 import React from "react";
 import TaskNameInput from "./TaskNameInput";
 import PointsInput from "./PointsInput";
 import {Message} from "@lumino/messaging";
-import TaskLink from "./TaskLink";
 import {Notebook} from "@jupyterlab/notebook";
+import {TaskLinkModal} from "./TaskLinkModal";
+import {TranslationBundle} from "@jupyterlab/translation";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
+
+export const LINK_TASK_BUTTON_CLASS = 'e2xgrader-link-task-button';
+export const DISMISS_LINK_TASK_BUTTON_CLASS = 'e2xgrader-dismiss-link-task-button';
 
 export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
   constructor(
     options: Toolbar.IOptions,
     registry: E2xGraderCellRegistry.IE2xGraderCellRegistry | undefined,
-    private _gradingCells: GradingCellModel[]
+    private _trans: TranslationBundle
   ) {
     super(options, registry);
     this.addClass('e2xgrader-TeacherCellToolbar');
-  }
-
-  get gradingCells(): GradingCellModel[] {
-    return this._gradingCells;
   }
 
   update() {
@@ -42,9 +43,8 @@ export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
     }
   }
 
-  protected onAfterAttach(_msg: Message) {
-    super.onAfterAttach(_msg);
-    if(this.gradingCellModel) this.gradingCells.push(this.gradingCellModel);
+  get trans(): TranslationBundle{
+    return this._trans;
   }
 
   protected onBeforeDetach(msg: Message) {
@@ -55,12 +55,12 @@ export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
 export namespace TeacherCellToolbar {
 
   export class TeacherCellToolbarElement extends E2xGraderCellToolbar.ToolbarElement {
-    constructor(private readonly _teacherToolbar: TeacherCellToolbar) {
-      super(_teacherToolbar);
+    constructor(teacherToolbar: TeacherCellToolbar, private _trans: TranslationBundle) {
+      super(teacherToolbar);
     }
 
-    get gradingCells(): GradingCellModel[]{
-      return this._teacherToolbar.gradingCells;
+    get trans(): TranslationBundle{
+      return this._trans;
     }
   }
 
@@ -74,7 +74,6 @@ export namespace TeacherCellToolbar {
     }
 
     renderElement(): React.JSX.Element {
-      console.log(this.cellRegistry?.getPlugins());
       return (<div className="e2xgrader-CellType">
             <CellTypeSelector initialType={this.gradingCellModel?.gradingCellType ?? ''} onChange={e => this.setCellType(e)} cellRegistry={this.cellRegistry} />
           </div>);
@@ -83,7 +82,8 @@ export namespace TeacherCellToolbar {
 
   export class CellTaskNameInput extends E2xGraderCellToolbar.ToolbarElement {
     setTaskName(newName: string): void{
-      this.gradingCellModel?.setNbgraderMetadataKey('task_name', newName);
+      if(!this.gradingCellModel) return;
+      this.gradingCellModel.taskName = newName;
     }
 
     renderElement(): React.JSX.Element {
@@ -108,14 +108,42 @@ export namespace TeacherCellToolbar {
 
   export class CellTaskLink extends TeacherCellToolbarElement {
     setLinkedTaskId(newId: string|undefined): void {
-      this.gradingCellModel?.setNbgraderMetadataKey('for', newId);
+      if(!this.gradingCellModel) return;
+      this.gradingCellModel.for = newId;
+      this.update();
     }
 
+    private getSolutionCells(): GradingCellModel[]{
+      return (this.cell?.parent as Notebook).widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => cell.isSolution);
+    };
+
+    private showSelectionDialog(): void {
+    showDialog({
+      title: this.trans.__('Task Link'),
+      body: new TaskLinkModal(this.gradingCellModel?.for, this.getSolutionCells()),
+      buttons: [
+        Dialog.cancelButton({
+          label: this.trans.__('Dismiss'),
+          className: DISMISS_LINK_TASK_BUTTON_CLASS
+        }),
+        Dialog.okButton({
+          label: this.trans.__('Link Task'),
+          className: LINK_TASK_BUTTON_CLASS
+        })
+      ]
+    }).then(result => {
+      if(result.button.accept){
+        this.setLinkedTaskId((!result.value || result.value === '-') ? undefined : (result.value as string));
+      }
+    });
+  }
+
     renderElement(): React.JSX.Element {
-      console.log('notebook cells', (this.cell?.parent as Notebook).widgets[0].model);
+      const solutionCells: GradingCellModel[] = this.getSolutionCells();
+      const linkedTaskCell: GradingCellModel | undefined = solutionCells.find(cell => cell.id === this.gradingCellModel?.for);
 
       return this.gradingCellModel && (this.gradingCellModel?.isDescription || this.gradingCellModel?.isAutograderTest) ? (<div className="e2xgrader-TaskLink">
-        <TaskLink initiallyLinkedTask={this.gradingCellModel?.for} onChange={e => this.setLinkedTaskId(e)} gradingCells={this.gradingCells} />
+        <a onClick={() => this.showSelectionDialog()}>{this.gradingCellModel?.for ? `🔗 ${linkedTaskCell?.taskName}` : '+ link to task'}</a>
       </div>) : (<></>);
     }
   }
@@ -136,13 +164,13 @@ export namespace TeacherCellToolbar {
 
   export function createTeacherCellToolbar(
     registry: E2xGraderCellRegistry.IE2xGraderCellRegistry | undefined,
-    gradingCells: GradingCellModel[]
+    trans: TranslationBundle
   ): TeacherCellToolbar {
-    const toolbar = new TeacherCellToolbar({}, registry, gradingCells);
+    const toolbar = new TeacherCellToolbar({}, registry, trans);
     toolbar.addItem('type', new TypeSelector(toolbar));
     toolbar.addItem('label', new CellLabel(toolbar));
     toolbar.addItem('task-name', new CellTaskNameInput(toolbar));
-    toolbar.addItem('task-link', new CellTaskLink(toolbar));
+    toolbar.addItem('task-link', new CellTaskLink(toolbar, trans));
     toolbar.addItem('points', new CellPointsInput(toolbar));
     return toolbar;
   }
