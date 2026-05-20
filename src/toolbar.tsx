@@ -1,6 +1,6 @@
 import {
   E2xGraderCellToolbar, E2xGraderCellRegistry,
-  GradingCellModel
+  GradingCellModel, NbgraderCellType, NbgraderCellTypes
 } from '@e2xgrader/core';
 import { Toolbar, lockIcon } from '@jupyterlab/ui-components';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
@@ -12,12 +12,16 @@ import {Message} from "@lumino/messaging";
 import {Notebook} from "@jupyterlab/notebook";
 import {TaskLinkModal} from "./TaskLinkModal";
 import {TranslationBundle} from "@jupyterlab/translation";
+import {linkIcon} from "@jupyterlab/ui-components";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
 
 export const LINK_TASK_BUTTON_CLASS = 'e2xgrader-link-task-button';
 export const DISMISS_LINK_TASK_BUTTON_CLASS = 'e2xgrader-dismiss-link-task-button';
+
+export const PROCEED_BREAKING_TASK_LINKS_BUTTON_CLASS = 'e2xgrader-proceed-breaking-task-links-button';
+export const DISMISS_BREAKING_TASK_LINKS_BUTTON_CLASS = 'e2xgrader-dismiss-breaking-task-links-button';
 
 export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
   constructor(
@@ -65,12 +69,35 @@ export namespace TeacherCellToolbar {
   }
 
   export class TypeSelector extends E2xGraderCellToolbar.ToolbarElement {
+    constructor(toolbar: TeacherCellToolbar, private trans: TranslationBundle) {
+      super(toolbar);
+    }
+
     setCellType(newType: string): void{
-      if(this.gradingCellModel) {
-        this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
+      const proceedSettingType = (): void => {
+        if(this.gradingCellModel) {
+          this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
+        }
+        this.update();
+        this.parent?.update();
       }
-      this.update();
-      this.parent?.update();
+
+      if(this.gradingCellModel?.isSolution                                                                // if the cell was a solution cell
+          &&!(NbgraderCellTypes.cellTypeConfigurations[newType as NbgraderCellType]?.solution ?? false)){ // and the new cell type does not mark a solution cell
+          const linkedCells: GradingCellModel[] = (this.cell?.parent as Notebook)?.widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => cell.for === this.cell?.id) ?? [];
+        if(linkedCells){
+          showTaskLinkWarningDialog(this.trans).then(result => {
+            if(result.button.accept){
+              linkedCells.forEach(cell => cell.for = undefined);
+              proceedSettingType();
+            }
+          })
+        }else {
+          proceedSettingType();
+        }
+      }else {
+        proceedSettingType();
+      }
     }
 
     renderElement(): React.JSX.Element {
@@ -106,45 +133,103 @@ export namespace TeacherCellToolbar {
     }
   }
 
+  function showTaskLinkWarningDialog(trans: TranslationBundle): Promise<Dialog.IResult<unknown>> {
+    return showDialog({
+      title: trans.__('Task Link'),
+      body: trans.__('Other cells are linked to this solution cell. Proceeding with this action will break these links!'),
+      buttons: [
+        Dialog.cancelButton({
+          label: trans.__('Dismiss'),
+          className: DISMISS_BREAKING_TASK_LINKS_BUTTON_CLASS
+        }),
+        Dialog.okButton({
+          label: trans.__('Proceed and break links'),
+          displayType: "warn",
+          className: PROCEED_BREAKING_TASK_LINKS_BUTTON_CLASS
+        })
+      ]
+    })
+  }
+
   export class CellTaskLink extends TeacherCellToolbarElement {
+
+
+    constructor(teacherToolbar: TeacherCellToolbar, trans: TranslationBundle) {
+      super(teacherToolbar, trans);
+      console.log('here');
+    }
+
+    activate() {
+      this.setupChangeListener(); //TODO fix listerner setup
+      super.activate();
+    }
+
+    dispose() {
+      this.removeChangeListener();
+      super.dispose();
+    }
+
+    private setupChangeListener(): void{
+      const linkedTaskCell: GradingCellModel|undefined = this.findLinkedTaskCell(this.getSolutionCells());
+      if(!linkedTaskCell) return;
+      linkedTaskCell.metadataChanged.connect(() => this.updateTag());
+    }
+
+    private removeChangeListener(): void{
+      const linkedTaskCell: GradingCellModel|undefined = this.findLinkedTaskCell(this.getSolutionCells());
+      if(!linkedTaskCell) return;
+      linkedTaskCell.metadataChanged.disconnect(() => this.updateTag());
+    }
+
+    private updateTag(): void{
+      this.update();
+      this.parent?.update();
+    }
+
     setLinkedTaskId(newId: string|undefined): void {
       if(!this.gradingCellModel) return;
+      this.removeChangeListener();
       this.gradingCellModel.for = newId;
+      this.setupChangeListener();
       this.update();
     }
 
     private getSolutionCells(): GradingCellModel[]{
-      return (this.cell?.parent as Notebook).widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => cell.isSolution);
+      return (this.cell?.parent as Notebook)?.widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => cell.isSolution) ?? [];
     };
 
+    private findLinkedTaskCell(solutionCells: GradingCellModel[]): GradingCellModel|undefined {
+      return solutionCells.find(cell => cell.id === this.gradingCellModel?.for);
+    }
+
     private showSelectionDialog(): void {
-    showDialog({
-      title: this.trans.__('Task Link'),
-      body: new TaskLinkModal(this.gradingCellModel?.for, this.getSolutionCells()),
-      buttons: [
-        Dialog.cancelButton({
-          label: this.trans.__('Dismiss'),
-          className: DISMISS_LINK_TASK_BUTTON_CLASS
-        }),
-        Dialog.okButton({
-          label: this.trans.__('Link Task'),
-          className: LINK_TASK_BUTTON_CLASS
-        })
-      ]
-    }).then(result => {
-      if(result.button.accept){
-        this.setLinkedTaskId((!result.value || result.value === '-') ? undefined : (result.value as string));
-      }
-    });
-  }
+      showDialog({
+        title: this.trans.__('Task Link'),
+        body: new TaskLinkModal(this.gradingCellModel?.for, this.getSolutionCells()),
+        buttons: [
+          Dialog.cancelButton({
+            label: this.trans.__('Dismiss'),
+            className: DISMISS_LINK_TASK_BUTTON_CLASS
+          }),
+          Dialog.okButton({
+            label: this.trans.__('Link Task'),
+            className: LINK_TASK_BUTTON_CLASS
+          })
+        ]
+      }).then(result => {
+        if(result.button.accept){
+          this.setLinkedTaskId((!result.value || result.value === '-') ? undefined : (result.value as string));
+        }
+      });
+    }
 
     renderElement(): React.JSX.Element {
       const solutionCells: GradingCellModel[] = this.getSolutionCells();
-      const linkedTaskCell: GradingCellModel | undefined = solutionCells.find(cell => cell.id === this.gradingCellModel?.for);
+      const linkedTaskCell: GradingCellModel | undefined = this.findLinkedTaskCell(solutionCells);
 
-      return this.gradingCellModel && (this.gradingCellModel?.isDescription || this.gradingCellModel?.isAutograderTest) ? (<div className="e2xgrader-TaskLink">
-        <a onClick={() => this.showSelectionDialog()}>{this.gradingCellModel?.for ? `🔗 ${linkedTaskCell?.taskName}` : '+ link to task'}</a>
-      </div>) : (<></>);
+      return this.gradingCellModel && (this.gradingCellModel?.isDescription || this.gradingCellModel?.isAutograderTest) ? (this.gradingCellModel?.for ? (<div className="e2xgrader-TaskLink linked">
+        <a onClick={() => this.showSelectionDialog()}><linkIcon.react className="e2xgrader-LinkIcon" /> {linkedTaskCell?.taskName}</a>
+      </div>): (<div className="e2xgrader-TaskLink"><a onClick={() => this.showSelectionDialog()}>+ link to task</a></div>)) : (<></>);
     }
   }
 
@@ -167,7 +252,7 @@ export namespace TeacherCellToolbar {
     trans: TranslationBundle
   ): TeacherCellToolbar {
     const toolbar = new TeacherCellToolbar({}, registry, trans);
-    toolbar.addItem('type', new TypeSelector(toolbar));
+    toolbar.addItem('type', new TypeSelector(toolbar, trans));
     toolbar.addItem('label', new CellLabel(toolbar));
     toolbar.addItem('task-name', new CellTaskNameInput(toolbar));
     toolbar.addItem('task-link', new CellTaskLink(toolbar, trans));

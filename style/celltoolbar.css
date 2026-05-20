@@ -2,20 +2,57 @@
   height: auto;
 }
 
+input, select{
+  border-radius: var(--jp-border-radius);
+  background-color: white;
+  border: var(--jp-border-width) solid var(--jp-border-color0);
+
+  &:active, &:focus, &:focus-within{
+    border-color: var(--jp-input-active-border-color);
+  }
+}
+
 .e2xgrader-TeacherCellToolbar {
   padding: calc(0.2 * var(--jp-private-toolbar-height));
   min-height: auto;
   width: 100%;
 
-  input, select{
-    border-radius: var(--jp-border-radius);
-    background-color: white;
-    border: var(--jp-border-width) solid var(--jp-border-color0);
-  }
-
   .jp-Toolbar-item[data-jp-item-name="points"]{
     margin-left: auto;
   }
+
+  .e2xgrader-TaskLink{
+      padding: 0.15rem 0.4rem;
+      margin: -0.15rem 0 -0.15rem 0.25rem;
+      border-radius: 50rem;
+      border: var(--jp-border-width) dashed currentColor;
+      cursor: pointer;
+
+    &:hover{
+      background-color: #00000010;
+    }
+
+    &.linked {
+      border: none;
+      background-color: var(--md-indigo-400);
+      color: white;
+      &:hover{
+        background-color: var(--md-indigo-500);
+      }
+    }
+
+    .e2xgrader-LinkIcon{
+      display: inline-flex;
+      vertical-align: center;
+      align-items: center;
+      --jp-inverse-layout-color3: currentcolor;
+    }
+  }
+}
+
+.e2xgrader-task-link-selector{
+  width: 100%;
+  font-size: 1rem;
 }
 
 .e2xgrader-CellLabel {

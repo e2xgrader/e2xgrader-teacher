@@ -1656,7 +1656,7 @@ __metadata:
 
 "@e2xgrader/core@file:../e2xgrader-core::locator=%40e2xgrader%2Fteacher%40workspace%3A.":
   version: 0.1.0-a1
-  resolution: "@e2xgrader/core@file:../e2xgrader-core#../e2xgrader-core::hash=d421ee&locator=%40e2xgrader%2Fteacher%40workspace%3A."
+  resolution: "@e2xgrader/core@file:../e2xgrader-core#../e2xgrader-core::hash=e720b9&locator=%40e2xgrader%2Fteacher%40workspace%3A."
   dependencies:
     "@jupyter/ydoc": ^3.0.5
     "@jupyterlab/application": ^4.0.0
@@ -1672,7 +1672,7 @@ __metadata:
     "@lumino/messaging": ^2.0.3
     "@lumino/signaling": ^2.1.4
     "@lumino/widgets": ^2.7.1
-  checksum: 0d1fa4b81b1f1c8a72fd763f35d5450265bee41beadbd2f272ee94eb0759890b6c66d41e948d0891e191870c148adcc3d90ed1fe47b0228232069399b7e66190
+  checksum: 2be3cc0d273b335d02d2bc39893bafec6decf6a18eea89b3eefa42db18c0af4ed655140d1cf370cbd5f08b6e1ba8c1da7e97194609af673f6651799c94ba27d6
   languageName: node
   linkType: hard
 
