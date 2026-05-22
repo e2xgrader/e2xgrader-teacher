@@ -1,32 +1,33 @@
-import {ReactWidget, Toolbar, ToolbarButtonComponent} from "@jupyterlab/ui-components";
-import {TranslationBundle, nullTranslator, ITranslator} from '@jupyterlab/translation';
+import {ReactWidget, Toolbar} from "@jupyterlab/ui-components";
+import {/*TranslationBundle, nullTranslator,*/ ITranslator} from '@jupyterlab/translation';
 import { NotebookPanel } from "@jupyterlab/notebook";
 import { Widget } from '@lumino/widgets';
+import React from "react";
 
 export const TOOLBAR_DROPDOWN_WIDGET_CLASS: string = 'e2x-Notebook-toolbarDropdownWidget';
-export const TOOLBAR_DROPDOWN_WIDGET_DROPDOWN_CLASS: string = 'e2x-Notebook-toolbarDropdownWidget-dropdown';
+//export const TOOLBAR_DROPDOWN_WIDGET_DROPDOWN_CLASS: string = 'e2x-Notebook-toolbarDropdownWidget-dropdown';
 
 export function createDropdownWidget(panel: NotebookPanel, translator: ITranslator): ReactWidget{
     return new DropdownWidget(panel.toolbar, translator);
 }
 
 export class DropdownWidget extends ReactWidget {
-    private _trans: TranslationBundle;
+    //private _trans: TranslationBundle;
     private _showDropdown: boolean = false;
 
     constructor(toolbarWidget: Toolbar<Widget>, translator: ITranslator) {
         super();
         this.addClass(TOOLBAR_DROPDOWN_WIDGET_CLASS);
-        this._trans = (translator || nullTranslator).load('e2xgrader_teacher');
+        //this._trans = (translator || nullTranslator).load('e2xgrader_teacher');
     }
 
     handleButtonClick(): void{
         this._showDropdown = !this._showDropdown;
     }
 
-    render(): JSX.Element {
-    return (
-      <div>
+    render(): React.JSX.Element {
+    return (<></>
+      /*<div>
         <ToolbarButtonComponent
           tooltip={this._trans.__('toggle dropdown')}
           label={this._trans.__('Additional Resources')}
@@ -51,7 +52,7 @@ export class DropdownWidget extends ReactWidget {
             })}
           </ul>
         )}
-      </div>
+      </div>*/
     );
   }
 }

@@ -13,15 +13,14 @@ import {Notebook} from "@jupyterlab/notebook";
 import {TaskLinkModal} from "./TaskLinkModal";
 import {TranslationBundle} from "@jupyterlab/translation";
 import {linkIcon} from "@jupyterlab/ui-components";
+import {showTaskLinkWarningDialog} from "./taskLinkWarningDialog";
+import {findLinkedCells, removeLink} from "./util/GradingCellLinks";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
 
 export const LINK_TASK_BUTTON_CLASS = 'e2xgrader-link-task-button';
 export const DISMISS_LINK_TASK_BUTTON_CLASS = 'e2xgrader-dismiss-link-task-button';
-
-export const PROCEED_BREAKING_TASK_LINKS_BUTTON_CLASS = 'e2xgrader-proceed-breaking-task-links-button';
-export const DISMISS_BREAKING_TASK_LINKS_BUTTON_CLASS = 'e2xgrader-dismiss-breaking-task-links-button';
 
 export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
   constructor(
@@ -82,13 +81,14 @@ export namespace TeacherCellToolbar {
         this.parent?.update();
       }
 
-      if(this.gradingCellModel?.isSolution                                                                // if the cell was a solution cell
+      if(this.gradingCellModel
+          && this.gradingCellModel?.isSolution                                                            // if the cell was a solution cell
           &&!(NbgraderCellTypes.cellTypeConfigurations[newType as NbgraderCellType]?.solution ?? false)){ // and the new cell type does not mark a solution cell
-          const linkedCells: GradingCellModel[] = (this.cell?.parent as Notebook)?.widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => cell.for === this.cell?.id) ?? [];
-        if(linkedCells){
+         const linkedCells: GradingCellModel[] = findLinkedCells(this.cell?.parent as Notebook, this.gradingCellModel!.id);
+         if(linkedCells.length > 0){
           showTaskLinkWarningDialog(this.trans).then(result => {
             if(result.button.accept){
-              linkedCells.forEach(cell => cell.for = undefined);
+              linkedCells.forEach(cell => removeLink(cell, this.gradingCellModel!.id));
               proceedSettingType();
             }
           })
@@ -133,31 +133,9 @@ export namespace TeacherCellToolbar {
     }
   }
 
-  function showTaskLinkWarningDialog(trans: TranslationBundle): Promise<Dialog.IResult<unknown>> {
-    return showDialog({
-      title: trans.__('Task Link'),
-      body: trans.__('Other cells are linked to this solution cell. Proceeding with this action will break these links!'),
-      buttons: [
-        Dialog.cancelButton({
-          label: trans.__('Dismiss'),
-          className: DISMISS_BREAKING_TASK_LINKS_BUTTON_CLASS
-        }),
-        Dialog.okButton({
-          label: trans.__('Proceed and break links'),
-          displayType: "warn",
-          className: PROCEED_BREAKING_TASK_LINKS_BUTTON_CLASS
-        })
-      ]
-    })
-  }
+
 
   export class CellTaskLink extends TeacherCellToolbarElement {
-
-
-    constructor(teacherToolbar: TeacherCellToolbar, trans: TranslationBundle) {
-      super(teacherToolbar, trans);
-      console.log('here');
-    }
 
     activate() {
       this.setupChangeListener(); //TODO fix listerner setup
@@ -170,12 +148,14 @@ export namespace TeacherCellToolbar {
     }
 
     private setupChangeListener(): void{
+      console.log('setting up listener');
       const linkedTaskCell: GradingCellModel|undefined = this.findLinkedTaskCell(this.getSolutionCells());
       if(!linkedTaskCell) return;
       linkedTaskCell.metadataChanged.connect(() => this.updateTag());
     }
 
     private removeChangeListener(): void{
+      console.log('removing listener');
       const linkedTaskCell: GradingCellModel|undefined = this.findLinkedTaskCell(this.getSolutionCells());
       if(!linkedTaskCell) return;
       linkedTaskCell.metadataChanged.disconnect(() => this.updateTag());
