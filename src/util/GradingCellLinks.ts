@@ -11,8 +11,6 @@ export function removeLink(cell: GradingCellModel, targetId: string){
         throw new Error('Unable to remove link! Cell is not linked to specified target');
     }
 
-    console.log(cell.for, targetId);
-
     if(Array.isArray(cell.for)){
         if(!cell.for.includes(targetId)) throwNotLinkedError();
         cell.for = cell.for.filter(id => id !== targetId);

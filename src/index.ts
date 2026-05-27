@@ -12,6 +12,8 @@ import {
 } from '@jupyterlab/apputils';
 import {ITranslator, nullTranslator} from '@jupyterlab/translation';
 import {DeleteCellCommand} from "./deleteCellCommand";
+import {AddTaskDescriptionCommand} from "./commands/addTaskDescriptionCommand";
+import {AddAutograderTestCommand} from "./commands/addAutograderTestCommand";
 
 /**
  * Initialization data for the @e2xgrader/teacher extension.
@@ -70,10 +72,10 @@ const toolbarWidgetFactoryPlugin: JupyterFrontEndPlugin<void> =
     }
   };
 
-const deleteCellCommandPlugin: JupyterFrontEndPlugin<void> =
+const authoringCommandsPlugin: JupyterFrontEndPlugin<void> =
   {
-    id: '@e2xgrader/teacher:delete-cell',
-    description: 'A JupyterLab extension for a checked delete-cell command in e2xgrader teacher mode',
+    id: '@e2xgrader/teacher:authoring-commands',
+    description: 'A JupyterLab extension for authoring commands in e2xgrader teacher mode',
     autoStart: true,
     requires: [INotebookTracker, ICommandPalette],
     optional: [ITranslator],
@@ -84,18 +86,29 @@ const deleteCellCommandPlugin: JupyterFrontEndPlugin<void> =
       translator?: ITranslator
     ) => {
       console.log(
-        'JupyterLab extension @e2xgrader/teacher:delete-cell is activated!'
+        'JupyterLab extension @e2xgrader/teacher:authoring-commands is activated!'
       );
       const trans = (translator ?? nullTranslator).load('e2xgrader_teacher');
 
       console.log(_app.commands);
       _app.commands.addCommand(DeleteCellCommand.COMMAND_ID, new DeleteCellCommand(_app, tracker, trans));
       commandPalette.addItem({ command: DeleteCellCommand.COMMAND_ID, category: 'e2xgrader'});
+      _app.commands.addKeyBinding({
+        command: DeleteCellCommand.COMMAND_ID,
+        keys: ['D', 'D'],
+        selector: '.jp-Notebook'
+      });
+
+      _app.commands.addCommand(AddTaskDescriptionCommand.COMMAND_ID, new AddTaskDescriptionCommand(tracker, trans));
+      commandPalette.addItem({ command: AddTaskDescriptionCommand.COMMAND_ID, category: 'e2xgrader'});
+
+      _app.commands.addCommand(AddAutograderTestCommand.COMMAND_ID, new AddAutograderTestCommand(tracker, trans));
+      commandPalette.addItem({ command: AddAutograderTestCommand.COMMAND_ID, category: 'e2xgrader'});
     }
   };
 
 export default [
     cellFactoryPlugin,
     toolbarWidgetFactoryPlugin,
-    deleteCellCommandPlugin
+    authoringCommandsPlugin
 ] as JupyterFrontEndPlugin<any>[];

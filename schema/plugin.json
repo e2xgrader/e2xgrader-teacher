@@ -19,7 +19,23 @@
       }
     ],
     "Cell": [
-      {
+        {
+            "name": "add-task-description",
+            "args": {},
+            "command": "teacher:add-task-description",
+            "label": "⁉",
+            "disabled": false,
+            "rank": 10
+        },
+        {
+            "name": "add-autograder-test",
+            "args": {},
+            "command": "teacher:add-autograder-test",
+            "label": "✔",
+            "disabled": false,
+            "rank": 20
+        },
+        {
             "name": "duplicate-cell",
             "args": {},
             "command": "notebook:duplicate-below",
