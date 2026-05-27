@@ -2,7 +2,8 @@ import {Notebook} from "@jupyterlab/notebook";
 import {GradingCellModel} from "@e2xgrader/core";
 
 export function findLinkedCells(notebook?: Notebook, targetId?: string): GradingCellModel[]{
-    return notebook?.widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => cell.for === targetId) ?? [];
+    if(!targetId) return [];
+    return notebook?.widgets.map(cell => new GradingCellModel(cell.model.sharedModel)).filter(cell => isLinkedCell(cell, targetId)) ?? [];
 }
 
 export function removeLink(cell: GradingCellModel, targetId: string){
@@ -20,4 +21,8 @@ export function removeLink(cell: GradingCellModel, targetId: string){
         if(cell.for !== targetId) throwNotLinkedError();
         cell.for = undefined;
     }
+}
+
+export function isLinkedCell(originCell: GradingCellModel, targetCellId: string): boolean{
+    return Array.isArray(originCell.for) ? originCell.for.includes(targetCellId) : originCell.for === targetCellId;
 }

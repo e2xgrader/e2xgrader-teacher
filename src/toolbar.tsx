@@ -8,13 +8,14 @@ import CellTypeSelector from "./CellTypeSelector";
 import React from "react";
 import TaskNameInput from "./TaskNameInput";
 import PointsInput from "./PointsInput";
-import {Message} from "@lumino/messaging";
 import {Notebook} from "@jupyterlab/notebook";
 import {TaskLinkModal} from "./TaskLinkModal";
 import {TranslationBundle} from "@jupyterlab/translation";
 import {linkIcon} from "@jupyterlab/ui-components";
 import {showTaskLinkWarningDialog} from "./taskLinkWarningDialog";
-import {findLinkedCells, removeLink} from "./util/GradingCellLinks";
+import {findLinkedCells, isLinkedCell, removeLink} from "./util/GradingCellLinks";
+import {Signal} from "@lumino/signaling";
+import {Message} from "@lumino/messaging";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
@@ -26,7 +27,8 @@ export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
   constructor(
     options: Toolbar.IOptions,
     registry: E2xGraderCellRegistry.IE2xGraderCellRegistry | undefined,
-    private _trans: TranslationBundle
+    private _trans: TranslationBundle,
+    private cellMetaDataChange: Signal<any, string>
   ) {
     super(options, registry);
     this.addClass('e2xgrader-TeacherCellToolbar');
@@ -50,8 +52,19 @@ export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
     return this._trans;
   }
 
+  protected announceMetaDataUpdate = (): void => {
+    if(this.gradingCellModel) this.cellMetaDataChange.emit(this.gradingCellModel.id);
+  }
+
+  protected onAfterAttach(_msg: Message) {
+    super.onAfterAttach(_msg);
+    this.gradingCellModel?.metadataChanged.connect(this.announceMetaDataUpdate);
+    this.announceMetaDataUpdate();
+  }
+
   protected onBeforeDetach(msg: Message) {
     super.onBeforeDetach(msg);
+    this.gradingCellModel?.metadataChanged.disconnect(this.announceMetaDataUpdate);
   }
 }
 
@@ -136,41 +149,18 @@ export namespace TeacherCellToolbar {
 
 
   export class CellTaskLink extends TeacherCellToolbarElement {
-
-    activate() {
-      this.setupChangeListener(); //TODO fix listerner setup
-      super.activate();
-    }
-
-    dispose() {
-      this.removeChangeListener();
-      super.dispose();
-    }
-
-    private setupChangeListener(): void{
-      console.log('setting up listener');
-      const linkedTaskCell: GradingCellModel|undefined = this.findLinkedTaskCell(this.getSolutionCells());
-      if(!linkedTaskCell) return;
-      linkedTaskCell.metadataChanged.connect(() => this.updateTag());
-    }
-
-    private removeChangeListener(): void{
-      console.log('removing listener');
-      const linkedTaskCell: GradingCellModel|undefined = this.findLinkedTaskCell(this.getSolutionCells());
-      if(!linkedTaskCell) return;
-      linkedTaskCell.metadataChanged.disconnect(() => this.updateTag());
-    }
-
-    private updateTag(): void{
-      this.update();
-      this.parent?.update();
+    constructor(teacherToolbar: TeacherCellToolbar, trans: TranslationBundle, cellMetaDataChange: Signal<any, string>) {
+      super(teacherToolbar, trans);
+      cellMetaDataChange.connect((sender: any, cellId: string) => {
+        if(!this.gradingCellModel || (!isLinkedCell(this.gradingCellModel, cellId) && cellId !== this.gradingCellModel.id)) return;
+        this.update();
+        this.parent?.update();
+      })
     }
 
     setLinkedTaskId(newId: string|undefined): void {
       if(!this.gradingCellModel) return;
-      this.removeChangeListener();
       this.gradingCellModel.for = newId;
-      this.setupChangeListener();
       this.update();
     }
 
@@ -229,13 +219,14 @@ export namespace TeacherCellToolbar {
 
   export function createTeacherCellToolbar(
     registry: E2xGraderCellRegistry.IE2xGraderCellRegistry | undefined,
-    trans: TranslationBundle
+    trans: TranslationBundle,
+    cellMetaDataChange: Signal<any, string>
   ): TeacherCellToolbar {
-    const toolbar = new TeacherCellToolbar({}, registry, trans);
+    const toolbar = new TeacherCellToolbar({}, registry, trans, cellMetaDataChange);
     toolbar.addItem('type', new TypeSelector(toolbar, trans));
     toolbar.addItem('label', new CellLabel(toolbar));
     toolbar.addItem('task-name', new CellTaskNameInput(toolbar));
-    toolbar.addItem('task-link', new CellTaskLink(toolbar, trans));
+    toolbar.addItem('task-link', new CellTaskLink(toolbar, trans, cellMetaDataChange));
     toolbar.addItem('points', new CellPointsInput(toolbar));
     return toolbar;
   }
