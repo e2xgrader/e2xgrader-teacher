@@ -39,7 +39,7 @@ export class AddTaskDescriptionCommand implements CommandRegistry.ICommandOption
             cell_type: TASK_DESCRIPTION_DEFAULT_CELL_TYPE,
             metadata: {
                 [E2X_METADATA_KEY]: {...E2xGraderMetadata.E2X_METADATA_DEFAULTS, ...{for: currentGradingCell.id}},
-                [NbgraderMetadata.NBGRADER_METADATA_KEY]: {...NbgraderMetadata.newNbGraderMetadata(), ...(NbgraderCellTypes.cellTypeConfigurations[NbgraderCellType.DESCRIPTION])}
+                [NbgraderMetadata.NBGRADER_METADATA_KEY]: {...NbgraderMetadata.newNbGraderMetadata(), ...(NbgraderCellTypes.cellTypeConfigurations[NbgraderCellType.TASK])}
             }
         });
         notebook.activeCellIndex = newCellIndex;

@@ -11,9 +11,11 @@ import {
   IToolbarWidgetRegistry
 } from '@jupyterlab/apputils';
 import {ITranslator, nullTranslator} from '@jupyterlab/translation';
-import {DeleteCellCommand} from "./deleteCellCommand";
+import {DeleteCellCommand/*, JUPYTERLAB_DELETE_CELL_COMMAND_ID*/} from "./commands/deleteCellCommand";
 import {AddTaskDescriptionCommand} from "./commands/addTaskDescriptionCommand";
 import {AddAutograderTestCommand} from "./commands/addAutograderTestCommand";
+//import {CommandPalette} from '@lumino/widgets';
+//import {EditableCommandPalette} from "@e2xgrader/core";
 
 /**
  * Initialization data for the @e2xgrader/teacher extension.
@@ -104,6 +106,10 @@ const authoringCommandsPlugin: JupyterFrontEndPlugin<void> =
 
       _app.commands.addCommand(AddAutograderTestCommand.COMMAND_ID, new AddAutograderTestCommand(tracker, trans));
       commandPalette.addItem({ command: AddAutograderTestCommand.COMMAND_ID, category: 'e2xgrader'});
+
+      //const cPalette: CommandPalette = (commandPalette as EditableCommandPalette).palette;
+      //const originalDeleteCommandItem = cPalette.items.find(commandItem => commandItem.command === JUPYTERLAB_DELETE_CELL_COMMAND_ID);
+      //if(originalDeleteCommandItem) cPalette.removeItem(originalDeleteCommandItem);
     }
   };
 

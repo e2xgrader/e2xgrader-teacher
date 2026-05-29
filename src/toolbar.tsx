@@ -197,7 +197,7 @@ export namespace TeacherCellToolbar {
       const solutionCells: GradingCellModel[] = this.getSolutionCells();
       const linkedTaskCell: GradingCellModel | undefined = this.findLinkedTaskCell(solutionCells);
 
-      return this.gradingCellModel && (this.gradingCellModel?.isDescription || this.gradingCellModel?.isAutograderTest) ? (this.gradingCellModel?.for ? (<div className="e2xgrader-TaskLink linked">
+      return this.gradingCellModel && (this.gradingCellModel?.isTask || this.gradingCellModel?.isAutograderTest) ? (this.gradingCellModel?.for ? (<div className="e2xgrader-TaskLink linked">
         <a onClick={() => this.showSelectionDialog()}><linkIcon.react className="e2xgrader-LinkIcon" /> {linkedTaskCell?.taskName}</a>
       </div>): (<div className="e2xgrader-TaskLink"><a onClick={() => this.showSelectionDialog()}>+ link to task</a></div>)) : (<></>);
     }

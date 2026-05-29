@@ -1623,7 +1623,7 @@ __metadata:
 
 "@e2xgrader/core@file:../e2xgrader-core::locator=%40e2xgrader%2Fteacher%40workspace%3A.":
   version: 0.1.0-a1
-  resolution: "@e2xgrader/core@file:../e2xgrader-core#../e2xgrader-core::hash=5cdeaa&locator=%40e2xgrader%2Fteacher%40workspace%3A."
+  resolution: "@e2xgrader/core@file:../e2xgrader-core#../e2xgrader-core::hash=90ee5c&locator=%40e2xgrader%2Fteacher%40workspace%3A."
   dependencies:
     "@jupyter/ydoc": ^3.0.5
     "@jupyterlab/application": ^4.0.0
@@ -1639,7 +1639,7 @@ __metadata:
     "@lumino/messaging": ^2.0.3
     "@lumino/signaling": ^2.1.4
     "@lumino/widgets": ^2.7.1
-  checksum: dae849b6e5812c0515effa789ac1aa132ed1a70d9dd8ca1e3e33b9c82bc9fea0be1f11a7e3f2c3b7257fc194ba344d1a7a94ff232b0f4f7cf3842c5b460a900f
+  checksum: 970e39748e92c7745ae235ee8899ff63209501cc76e1441701df182b85a70dca73174f67c69a553d1cb9b8e28dd04adb944ef22091bedeecfc0c3206284ca9cb
   languageName: node
   linkType: hard
 
@@ -1649,7 +1649,6 @@ __metadata:
   dependencies:
     "@e2xgrader/core": "file:../e2xgrader-core"
     "@jupyterlab/application": ^4.0.0
-    "@jupyterlab/apputils-extension": ^4.5.6
     "@jupyterlab/builder": ^4.0.0
     "@jupyterlab/codeeditor": ^4.5.6
     "@jupyterlab/notebook": ^4.5.6
@@ -2165,37 +2164,6 @@ __metadata:
     "@lumino/signaling": ^2.1.5
     "@lumino/widgets": ^2.7.5
   checksum: 7802cb146c7675e5db854f575002d874d829cdc3ad570d2ef2646f7cedd33dbca14bb9e7407bf46afe5d8d845dd295a22c63de068459e7d4650bc348566fb793
-  languageName: node
-  linkType: hard
-
-"@jupyterlab/apputils-extension@npm:^4.5.6":
-  version: 4.5.7
-  resolution: "@jupyterlab/apputils-extension@npm:4.5.7"
-  dependencies:
-    "@jupyterlab/application": ^4.5.7
-    "@jupyterlab/apputils": ^4.6.7
-    "@jupyterlab/coreutils": ^6.5.7
-    "@jupyterlab/docregistry": ^4.5.7
-    "@jupyterlab/mainmenu": ^4.5.7
-    "@jupyterlab/rendermime-interfaces": ^3.13.7
-    "@jupyterlab/services": ^7.5.7
-    "@jupyterlab/settingregistry": ^4.5.7
-    "@jupyterlab/statedb": ^4.5.7
-    "@jupyterlab/statusbar": ^4.5.7
-    "@jupyterlab/translation": ^4.5.7
-    "@jupyterlab/ui-components": ^4.5.7
-    "@jupyterlab/workspaces": ^4.5.7
-    "@lumino/algorithm": ^2.0.4
-    "@lumino/commands": ^2.3.3
-    "@lumino/coreutils": ^2.2.2
-    "@lumino/disposable": ^2.1.5
-    "@lumino/domutils": ^2.0.4
-    "@lumino/polling": ^2.1.5
-    "@lumino/widgets": ^2.7.5
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-toastify: ^9.0.8
-  checksum: 540b211d9bcd9dcbb402cdd587e24b33a1635497f020e16b75a641d1a65b202766256aa5c77f4534968c646edb53199caffab0c9ff423649e1745e3d357bb019
   languageName: node
   linkType: hard
 
@@ -3047,19 +3015,6 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 675ae0f415de19abd1376a4be696dc20024d17dfad9c09ed7d903cb26a6ea55c688f188a9d034c0f566c053e9c70321180c01304153a498eb8b665af38531fbd
-  languageName: node
-  linkType: hard
-
-"@jupyterlab/workspaces@npm:^4.5.7":
-  version: 4.5.7
-  resolution: "@jupyterlab/workspaces@npm:4.5.7"
-  dependencies:
-    "@jupyterlab/services": ^7.5.7
-    "@lumino/coreutils": ^2.2.2
-    "@lumino/disposable": ^2.1.5
-    "@lumino/polling": ^2.1.5
-    "@lumino/signaling": ^2.1.5
-  checksum: 503dea1d4e1127cb6030d126ebbfdc3a66835d1ac5efb3245fd1c9056c3fc3450add9a4330d49b2f4c9156df8e44df6fbf7bbe2ace7f1e176f8055eadde19003
   languageName: node
   linkType: hard
 
@@ -5000,13 +4955,6 @@ __metadata:
     kind-of: ^6.0.2
     shallow-clone: ^3.0.0
   checksum: 770f912fe4e6f21873c8e8fbb1e99134db3b93da32df271d00589ea4a29dbe83a9808a322c93f3bcaf8584b8b4fa6fc269fc8032efbaa6728e0c9886c74467d2
-  languageName: node
-  linkType: hard
-
-"clsx@npm:^1.1.1":
-  version: 1.2.1
-  resolution: "clsx@npm:1.2.1"
-  checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
   languageName: node
   linkType: hard
 
@@ -9159,18 +9107,6 @@ __metadata:
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
   checksum: e20fe84c86ff172fc8d898251b7cc2c43645d108bf96d0b8edf39b98f9a2cae97b40520ee7ed8ee0085ccc94736c4886294456033304151c3f94978cec03df21
-  languageName: node
-  linkType: hard
-
-"react-toastify@npm:^9.0.8":
-  version: 9.1.3
-  resolution: "react-toastify@npm:9.1.3"
-  dependencies:
-    clsx: ^1.1.1
-  peerDependencies:
-    react: ">=16"
-    react-dom: ">=16"
-  checksum: e8bd92c5cbf831b43a042644ab9bc69abe6ceb3ce91ba71f5cd2d8b6a2c9885ca52770e1f1ba64c5632607f6df962db344a26c7fba57606faf5aa0e7bfc8535f
   languageName: node
   linkType: hard
 
