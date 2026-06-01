@@ -15,7 +15,34 @@
       {
         "name": "test",
         "type": "label",
-        "label": "test"
+        "label": "test",
+        "rank": 10
+      },
+      {
+        "name": "add-nbgrader-task",
+        "type": "dropdown",
+        "label": "Add NbGrader Task",
+        "rank": 20,
+        "commands": [
+          {
+            "name": "add-manually-graded-task",
+            "label": "Add Manually Graded Task",
+            "type": "command",
+            "command": "teacher:add-nbgrader-task",
+            "args": {
+              "cellType": "manual"
+            }
+          },
+          {
+            "name": "add-automatically-graded-task",
+            "label": "Add Automatically Graded Task",
+            "type": "command",
+            "command": "teacher:add-nbgrader-task",
+            "args": {
+              "cellType": "automatic"
+            }
+          }
+        ]
       }
     ],
     "Cell": [
