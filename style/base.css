@@ -3,3 +3,32 @@
 
     https://jupyterlab.readthedocs.io/en/stable/developer/css.html
 */
+
+.e2x-controls {
+  input,
+  select {
+    border-radius: var(--jp-border-radius);
+    background-color: white;
+    border: var(--jp-border-width) solid var(--jp-border-color0);
+
+    &:active,
+    &:focus,
+    &:focus-within {
+      border-color: var(--jp-input-active-border-color);
+    }
+
+    &.invalid {
+      outline: 2px solid var(--jp-error-color1) !important;
+      border-color: var(--jp-error-color1) !important;
+      color: var(--jp-error-color0);
+    }
+  }
+}
+
+.e2x-input-validation-error {
+  color: var(--jp-error-color0);
+
+  &:empty {
+    display: none;
+  }
+}

@@ -3,17 +3,20 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import {INotebookTracker, NotebookPanel} from '@jupyterlab/notebook';
+import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 import { E2XContentFactoryTeacher } from './content-factory';
 import { E2xGraderCellRegistry } from '@e2xgrader/core';
+import { ICommandPalette, IToolbarWidgetRegistry } from '@jupyterlab/apputils';
+import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import {
-    ICommandPalette,
-  IToolbarWidgetRegistry
-} from '@jupyterlab/apputils';
-import {ITranslator, nullTranslator} from '@jupyterlab/translation';
-import {DeleteCellCommand/*, JUPYTERLAB_DELETE_CELL_COMMAND_ID*/} from "./commands/deleteCellCommand";
-import {AddTaskDescriptionCommand} from "./commands/addTaskDescriptionCommand";
-import {AddAutograderTestCommand} from "./commands/addAutograderTestCommand";
+  DeleteCellCommand /*, JUPYTERLAB_DELETE_CELL_COMMAND_ID*/
+} from './commands/deleteCellCommand';
+import { AddTaskDescriptionCommand } from './commands/addTaskDescriptionCommand';
+import { AddAutograderTestCommand } from './commands/addAutograderTestCommand';
+import { AddNbGraderTaskCommand } from './commands/addNbGraderTaskCommand';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
+import { AddPluginTaskCommand } from './commands/addPluginTaskCommand';
+import { AddTaskWidget } from './AddTaskWidget';
 //import {CommandPalette} from '@lumino/widgets';
 //import {EditableCommandPalette} from "@e2xgrader/core";
 
@@ -26,12 +29,13 @@ const cellFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
     description: 'A JupyterLab extension for e2xgrader teacher mode',
     autoStart: true,
     requires: [IEditorServices, E2xGraderCellRegistry.IE2xGraderCellRegistry],
-    optional: [ITranslator],
+    optional: [ISettingRegistry, ITranslator],
     provides: NotebookPanel.IContentFactory,
-    activate: (
+    activate: async (
       _app: JupyterFrontEnd,
       editorServices: IEditorServices,
       cellRegistry: E2xGraderCellRegistry.IE2xGraderCellRegistry,
+      settingRegistry?: ISettingRegistry,
       translator?: ITranslator
     ) => {
       console.log(
@@ -45,7 +49,9 @@ const cellFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
         {
           editorFactory
         },
-        undefined,
+        settingRegistry
+          ? await settingRegistry.load('@e2xgrader/core:cell-factory')
+          : undefined,
         cellRegistry,
         trans
       );
@@ -53,68 +59,114 @@ const cellFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
     }
   };
 
-const toolbarWidgetFactoryPlugin: JupyterFrontEndPlugin<void> =
-  {
-    id: '@e2xgrader/teacher:toolbar-widgets',
-    description: 'A JupyterLab extension for toolbar widgets in e2xgrader teacher mode',
-    autoStart: true,
-    requires: [IToolbarWidgetRegistry, E2xGraderCellRegistry.IE2xGraderCellRegistry],
-    optional: [ITranslator],
-    activate: (
-      _app: JupyterFrontEnd,
-      toolbarWidgetRegistry: IToolbarWidgetRegistry,
-      cellRegistry: E2xGraderCellRegistry.IE2xGraderCellRegistry,
-      translator?: ITranslator
-    ) => {
-      console.log(
-        'JupyterLab extension @e2xgrader/teacher:toolbar-widgets is activated!'
-      );
+const toolbarWidgetFactoryPlugin: JupyterFrontEndPlugin<void> = {
+  id: '@e2xgrader/teacher:toolbar-widgets',
+  description:
+    'A JupyterLab extension for toolbar widgets in e2xgrader teacher mode',
+  autoStart: true,
+  requires: [
+    IToolbarWidgetRegistry,
+    E2xGraderCellRegistry.IE2xGraderCellRegistry
+  ],
+  optional: [ITranslator],
+  activate: (
+    _app: JupyterFrontEnd,
+    toolbarWidgetRegistry: IToolbarWidgetRegistry,
+    cellRegistry: E2xGraderCellRegistry.IE2xGraderCellRegistry,
+    translator?: ITranslator
+  ) => {
+    console.log(
+      'JupyterLab extension @e2xgrader/teacher:toolbar-widgets is activated!'
+    );
+  }
+};
 
+const authoringCommandsPlugin: JupyterFrontEndPlugin<void> = {
+  id: '@e2xgrader/teacher:authoring-commands',
+  description:
+    'A JupyterLab extension for authoring commands in e2xgrader teacher mode',
+  autoStart: true,
+  requires: [
+    INotebookTracker,
+    ICommandPalette,
+    E2xGraderCellRegistry.IE2xGraderCellRegistry,
+    ISettingRegistry,
+    IToolbarWidgetRegistry
+  ],
+  optional: [ITranslator],
+  activate: async (
+    _app: JupyterFrontEnd,
+    tracker: INotebookTracker,
+    commandPalette: ICommandPalette,
+    cellRegistry: E2xGraderCellRegistry.IE2xGraderCellRegistry,
+    settingsRegistry: ISettingRegistry,
+    toolbarWidgetRegistry: IToolbarWidgetRegistry,
+    translator?: ITranslator
+  ) => {
+    console.log(
+      'JupyterLab extension @e2xgrader/teacher:authoring-commands is activated!'
+    );
+    const trans = (translator ?? nullTranslator).load('e2xgrader_teacher');
+    const settings: ISettingRegistry.ISettings = await settingsRegistry.load(
+      '@e2xgrader/teacher:plugin'
+    );
 
-    }
-  };
+    console.log(_app.commands);
+    _app.commands.addCommand(
+      DeleteCellCommand.COMMAND_ID,
+      new DeleteCellCommand(_app, tracker, trans)
+    );
+    commandPalette.addItem({
+      command: DeleteCellCommand.COMMAND_ID,
+      category: 'e2xgrader'
+    });
+    _app.commands.addKeyBinding({
+      command: DeleteCellCommand.COMMAND_ID,
+      keys: ['D', 'D'],
+      selector: '.jp-Notebook'
+    });
 
-const authoringCommandsPlugin: JupyterFrontEndPlugin<void> =
-  {
-    id: '@e2xgrader/teacher:authoring-commands',
-    description: 'A JupyterLab extension for authoring commands in e2xgrader teacher mode',
-    autoStart: true,
-    requires: [INotebookTracker, ICommandPalette],
-    optional: [ITranslator],
-    activate: (
-      _app: JupyterFrontEnd,
-      tracker: INotebookTracker,
-      commandPalette: ICommandPalette,
-      translator?: ITranslator
-    ) => {
-      console.log(
-        'JupyterLab extension @e2xgrader/teacher:authoring-commands is activated!'
-      );
-      const trans = (translator ?? nullTranslator).load('e2xgrader_teacher');
+    _app.commands.addCommand(
+      AddTaskDescriptionCommand.COMMAND_ID,
+      new AddTaskDescriptionCommand(tracker, trans)
+    );
+    commandPalette.addItem({
+      command: AddTaskDescriptionCommand.COMMAND_ID,
+      category: 'e2xgrader'
+    });
 
-      console.log(_app.commands);
-      _app.commands.addCommand(DeleteCellCommand.COMMAND_ID, new DeleteCellCommand(_app, tracker, trans));
-      commandPalette.addItem({ command: DeleteCellCommand.COMMAND_ID, category: 'e2xgrader'});
-      _app.commands.addKeyBinding({
-        command: DeleteCellCommand.COMMAND_ID,
-        keys: ['D', 'D'],
-        selector: '.jp-Notebook'
-      });
+    _app.commands.addCommand(
+      AddAutograderTestCommand.COMMAND_ID,
+      new AddAutograderTestCommand(tracker, trans)
+    );
+    commandPalette.addItem({
+      command: AddAutograderTestCommand.COMMAND_ID,
+      category: 'e2xgrader'
+    });
 
-      _app.commands.addCommand(AddTaskDescriptionCommand.COMMAND_ID, new AddTaskDescriptionCommand(tracker, trans));
-      commandPalette.addItem({ command: AddTaskDescriptionCommand.COMMAND_ID, category: 'e2xgrader'});
+    _app.commands.addCommand(
+      AddNbGraderTaskCommand.COMMAND_ID,
+      new AddNbGraderTaskCommand(_app, tracker, trans, settings)
+    );
+    _app.commands.addCommand(
+      AddPluginTaskCommand.COMMAND_ID,
+      new AddPluginTaskCommand(tracker, cellRegistry, trans, settings)
+    );
 
-      _app.commands.addCommand(AddAutograderTestCommand.COMMAND_ID, new AddAutograderTestCommand(tracker, trans));
-      commandPalette.addItem({ command: AddAutograderTestCommand.COMMAND_ID, category: 'e2xgrader'});
+    toolbarWidgetRegistry.addFactory<NotebookPanel>(
+      'NotebookSecondary',
+      AddTaskWidget.WIDGET_ID,
+      () => new AddTaskWidget(trans, _app.commands, cellRegistry)
+    );
 
-      //const cPalette: CommandPalette = (commandPalette as EditableCommandPalette).palette;
-      //const originalDeleteCommandItem = cPalette.items.find(commandItem => commandItem.command === JUPYTERLAB_DELETE_CELL_COMMAND_ID);
-      //if(originalDeleteCommandItem) cPalette.removeItem(originalDeleteCommandItem);
-    }
-  };
+    //const cPalette: CommandPalette = (commandPalette as EditableCommandPalette).palette;
+    //const originalDeleteCommandItem = cPalette.items.find(commandItem => commandItem.command === JUPYTERLAB_DELETE_CELL_COMMAND_ID);
+    //if(originalDeleteCommandItem) cPalette.removeItem(originalDeleteCommandItem);
+  }
+};
 
 export default [
-    cellFactoryPlugin,
-    toolbarWidgetFactoryPlugin,
-    authoringCommandsPlugin
+  cellFactoryPlugin,
+  toolbarWidgetFactoryPlugin,
+  authoringCommandsPlugin
 ] as JupyterFrontEndPlugin<any>[];

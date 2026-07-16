@@ -13,98 +13,76 @@
     ],
     "NotebookSecondary": [
       {
-        "name": "test",
+        "name": "authoring-toolbar-label",
         "type": "label",
-        "label": "test",
+        "label": "Authoring Toolbar",
         "rank": 10
       },
       {
-        "name": "add-nbgrader-task",
-        "type": "dropdown",
-        "label": "Add NbGrader Task",
-        "rank": 20,
-        "commands": [
-          {
-            "name": "add-manually-graded-task",
-            "label": "Add Manually Graded Task",
-            "type": "command",
-            "command": "teacher:add-nbgrader-task",
-            "args": {
-              "cellType": "manual"
-            }
-          },
-          {
-            "name": "add-automatically-graded-task",
-            "label": "Add Automatically Graded Task",
-            "type": "command",
-            "command": "teacher:add-nbgrader-task",
-            "args": {
-              "cellType": "automatic"
-            }
-          }
-        ]
+        "name": "add-task",
+        "rank": 20
       }
     ],
     "Cell": [
-        {
-            "name": "add-task-description",
-            "args": {},
-            "command": "teacher:add-task-description",
-            "label": "⁉",
-            "disabled": false,
-            "rank": 10
-        },
-        {
-            "name": "add-autograder-test",
-            "args": {},
-            "command": "teacher:add-autograder-test",
-            "label": "✔",
-            "disabled": false,
-            "rank": 20
-        },
-        {
-            "name": "duplicate-cell",
-            "args": {},
-            "command": "notebook:duplicate-below",
-            "disabled": false,
-            "rank": 50
-        },
-        {
-            "name": "move-cell-up",
-            "args": {},
-            "command": "notebook:move-cell-up",
-            "disabled": false,
-            "rank": 50
-        },
-        {
-            "name": "move-cell-down",
-            "args": {},
-            "command": "notebook:move-cell-down",
-            "disabled": false,
-            "rank": 50
-        },
-        {
-            "name": "insert-cell-above",
-            "args": {},
-            "command": "notebook:insert-cell-above",
-            "disabled": false,
-            "rank": 50
-        },
-        {
-            "name": "insert-cell-below",
-            "args": {},
-            "command": "notebook:insert-cell-below",
-            "disabled": false,
-            "rank": 50
-        },
-        {
-            "name": "delete-cell",
-            "args": {},
-            "command": "teacher:delete-cell",
-            "disabled": false,
-            "icon": "ui-components:delete",
-            "rank": 50
-        }
+      {
+        "name": "add-task-description",
+        "args": {},
+        "command": "teacher:add-task-description",
+        "label": "⁉",
+        "disabled": false,
+        "rank": 10
+      },
+      {
+        "name": "add-autograder-test",
+        "args": {},
+        "command": "teacher:add-autograder-test",
+        "label": "✔",
+        "disabled": false,
+        "rank": 20
+      },
+      {
+        "name": "duplicate-cell",
+        "args": {},
+        "command": "notebook:duplicate-below",
+        "disabled": false,
+        "rank": 50
+      },
+      {
+        "name": "move-cell-up",
+        "args": {},
+        "command": "notebook:move-cell-up",
+        "disabled": false,
+        "rank": 50
+      },
+      {
+        "name": "move-cell-down",
+        "args": {},
+        "command": "notebook:move-cell-down",
+        "disabled": false,
+        "rank": 50
+      },
+      {
+        "name": "insert-cell-above",
+        "args": {},
+        "command": "notebook:insert-cell-above",
+        "disabled": false,
+        "rank": 50
+      },
+      {
+        "name": "insert-cell-below",
+        "args": {},
+        "command": "notebook:insert-cell-below",
+        "disabled": false,
+        "rank": 50
+      },
+      {
+        "name": "delete-cell",
+        "args": {},
+        "command": "teacher:delete-cell",
+        "disabled": false,
+        "icon": "ui-components:delete",
+        "rank": 50
+      }
     ]
   },
   "jupyter.lab.internationalization": {
@@ -114,6 +92,13 @@
   "title": "@e2xgrader/teacher",
   "description": "@e2xgrader/teacher settings.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "show_add_task_properties_dialog": {
+      "title": "Show Add Task Dialog",
+      "description": "Will display a dialog upon creation of a new task, prompting the user provide a task name and define the number of points.",
+      "type": "boolean",
+      "default": true
+    }
+  },
   "additionalProperties": false
 }
