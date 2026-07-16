@@ -1,0 +1,111 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: e2xgrader_teacher \n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-06-15 14:49+0000\n"
+"PO-Revision-Date: 2026-06-15 14:49+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: de_DE <LL@li.org>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgctxt "schema"
+msgid "@e2xgrader/teacher settings."
+msgstr ""
+
+msgctxt "schema"
+msgid "@e2xgrader/teacher"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "⁉"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "✔"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "test"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Add Manually Graded Task"
+msgstr "Manuell Bewertete Aufgabe Hinzufügen"
+
+msgctxt "toolbar"
+msgid "Add Automatically Graded Task"
+msgstr "Automatisch Bewertete Aufgabe Hinzufügen"
+
+msgctxt "toolbar"
+msgid "Add NbGrader Task"
+msgstr "NbGrader Aufgabe Hinzufügen"
+
+msgctxt "toolbar"
+msgid "e²xgrader-teacher"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "e²x"
+msgstr ""
+
+#: src/commands/addAutograderTestCommand.ts:20
+msgid "Add Autograder Test Cell"
+msgstr "Autograder Test Zelle Hinzufügen"
+
+#: src/commands/addAutograderTestCommand.ts:24
+msgid "Add a autograder test that is linked to this cell"
+msgstr "Fügt einen autograder test hinzu, welcher mit dieser Zelle verknüpft ist."
+
+#: src/commands/addNbGraderTaskCommand.ts:22
+msgid "Add new NbGrader Task"
+msgstr "NbGrader Aufgabe Hinzufügen"
+
+#: src/commands/addTaskDescriptionCommand.ts:20
+msgid "Add Task Description Cell"
+msgstr "Aufgabenstellung Hinzufügen"
+
+#: src/commands/addTaskDescriptionCommand.ts:24
+msgid "Add a task description that is linked to this cell"
+msgstr "Fügt eine Aufgabenstellung hinzu, welche mit dieser Zelle verknüpft ist."
+
+#: src/commands/deleteCellCommand.ts:16
+msgid "Delete Cell"
+msgid_plural "Delete Cells"
+msgstr[0] "Zelle Löschen"
+msgstr[1] "Zellen Löschen"
+
+#: src/commands/deleteCellCommand.ts:24
+msgid "Delete this cell"
+msgid_plural "Delete these %1 cells"
+msgstr[0] "Diese Zelle löschen"
+msgstr[1] "Diese %1 Zellen löschen"
+
+#: src/taskLinkWarningDialog.ts:10
+msgid ""
+"Other cells are linked to this solution cell. Proceeding with this action "
+"will break these links!"
+msgstr ""
+"Andere Zellen sind mit dieser Lösungszelle verknüpft. Wenn Sie fortfahren, "
+"werden diese Verknüpfungen entfernt!"
+
+#: src/taskLinkWarningDialog.ts:13 src/toolbar.tsx:181
+msgid "Dismiss"
+msgstr "Abbrechen"
+
+#: src/taskLinkWarningDialog.ts:17
+msgid "Proceed and break links"
+msgstr "Fortfahren und Verknüpfungen entfernen"
+
+#: src/taskLinkWarningDialog.ts:9 src/toolbar.tsx:177
+msgid "Task Link"
+msgstr "Aufgabenverknüpfung"
+
+#: src/toolbar.tsx:185
+msgid "Link Task"
+msgstr "Aufgabe verknüpfen"

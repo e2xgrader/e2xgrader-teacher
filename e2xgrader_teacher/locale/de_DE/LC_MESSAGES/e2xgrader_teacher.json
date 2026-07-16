@@ -1,0 +1,55 @@
+{
+    "": {
+        "domain": "e2xgrader_teacher",
+        "language": "de-DE",
+        "plural_forms": "nplurals=2; plural=(n != 1);",
+        "version": "e2xgrader_teacher"
+    },
+    "Add Autograder Test Cell": [
+        "Autograder Test Zelle Hinzuf\u00fcgen"
+    ],
+    "Add Task Description Cell": [
+        "Aufgabenstellung Hinzuf\u00fcgen"
+    ],
+    "Add a autograder test that is linked to this cell": [
+        "F\u00fcgt einen autograder test hinzu, welcher mit dieser Zelle verkn\u00fcpft ist."
+    ],
+    "Add a task description that is linked to this cell": [
+        "F\u00fcgt eine Aufgabenstellung hinzu, welche mit dieser Zelle verkn\u00fcpft ist."
+    ],
+    "Add new NbGrader Task": [
+        "NbGrader Aufgabe Hinzuf\u00fcgen"
+    ],
+    "Delete Cell": [
+        "Zelle L\u00f6schen",
+        "Zellen L\u00f6schen"
+    ],
+    "Delete this cell": [
+        "Diese Zelle l\u00f6schen",
+        "Diese %1 Zellen l\u00f6schen"
+    ],
+    "Dismiss": [
+        "Abbrechen"
+    ],
+    "Link Task": [
+        "Aufgabe verkn\u00fcpfen"
+    ],
+    "Other cells are linked to this solution cell. Proceeding with this action will break these links!": [
+        "Andere Zellen sind mit dieser L\u00f6sungszelle verkn\u00fcpft. Wenn Sie fortfahren, werden diese Verkn\u00fcpfungen entfernt!"
+    ],
+    "Proceed and break links": [
+        "Fortfahren und Verkn\u00fcpfungen entfernen"
+    ],
+    "Task Link": [
+        "Aufgabenverkn\u00fcpfung"
+    ],
+    "toolbar\u0004Add Automatically Graded Task": [
+        "Automatisch Bewertete Aufgabe Hinzuf\u00fcgen"
+    ],
+    "toolbar\u0004Add Manually Graded Task": [
+        "Manuell Bewertete Aufgabe Hinzuf\u00fcgen"
+    ],
+    "toolbar\u0004Add NbGrader Task": [
+        "NbGrader Aufgabe Hinzuf\u00fcgen"
+    ]
+}
