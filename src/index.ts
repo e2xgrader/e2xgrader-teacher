@@ -5,7 +5,10 @@ import {
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 import { E2XContentFactoryTeacher } from './content-factory';
-import { E2xGraderCellRegistry } from '@e2xgrader/core';
+import {
+  E2xGraderCellRegistry,
+  PRIMARY_NOTEBOOK_TOOLBAR_FACTORY_ID
+} from '@e2xgrader/core';
 import { ICommandPalette, IToolbarWidgetRegistry } from '@jupyterlab/apputils';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import {
@@ -154,7 +157,7 @@ const authoringCommandsPlugin: JupyterFrontEndPlugin<void> = {
     );
 
     toolbarWidgetRegistry.addFactory<NotebookPanel>(
-      'NotebookSecondary',
+      PRIMARY_NOTEBOOK_TOOLBAR_FACTORY_ID,
       AddTaskWidget.WIDGET_ID,
       () => new AddTaskWidget(trans, _app.commands, cellRegistry)
     );

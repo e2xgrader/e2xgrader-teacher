@@ -23,6 +23,14 @@
     border-radius: 50rem;
     border: var(--jp-border-width) dashed currentcolor;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
 
     &:hover {
       background-color: #00000010;
