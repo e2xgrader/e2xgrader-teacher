@@ -5,8 +5,26 @@
         "plural_forms": "nplurals=2; plural=(n != 1);",
         "version": "e2xgrader_teacher"
     },
+    "# Answer\n\n# Please write your code answer here.\n\n": [
+        "# Antwort\n\n# Bitte programmieren Sie hier Ihre Antwort.\n\n"
+    ],
+    "# Test\n\n# Please write your code test here.\n\n": [
+        "# Test\n\n# Bitte schreiben Sie hier Ihren Testcode.\n\n"
+    ],
+    "## Answer\n\nPlease write your markdown answer here.": [
+        "## Answer\n\nBitte schreiben Sie hier Ihren Markdown Antwort."
+    ],
+    "## Question\n\nPlease write your question here.": [
+        "## Frage\n\nBitte Schreiben Sie hier Ihre Aufgabenstellung."
+    ],
+    "%1 Task": [
+        "%1 Aufgabe"
+    ],
     "Add Autograder Test Cell": [
         "Autograder Test Zelle Hinzuf\u00fcgen"
+    ],
+    "Add Task": [
+        "Aufgabe Hinzuf\u00fcgen"
     ],
     "Add Task Description Cell": [
         "Aufgabenstellung Hinzuf\u00fcgen"
@@ -20,6 +38,27 @@
     "Add new NbGrader Task": [
         "NbGrader Aufgabe Hinzuf\u00fcgen"
     ],
+    "Add new Plugin Task": [
+        "Plugin Aufgabe Hinzuf\u00fcgen"
+    ],
+    "Answer\n\nWrite your answer here.\n\n": [
+        "Antwort\n\nSchreiben Sie hier Ihre Antwort.\n\n"
+    ],
+    "Cancel": [
+        "Abbrechen"
+    ],
+    "Code Task (Automatically Graded)": [
+        "Automatisch Bewertete Aufgabe"
+    ],
+    "Code Task (Manually Graded)": [
+        "Manuell Bewertete Aufgabe"
+    ],
+    "Creates a new %1 task": [
+        "Erzeugt eine neue %1 Aufgabe"
+    ],
+    "Creates a new task with %1 in %2.": [
+        "Erzeugt eine neue %1 Aufgabe mit %2 Antwort."
+    ],
     "Delete Cell": [
         "Zelle L\u00f6schen",
         "Zellen L\u00f6schen"
@@ -31,17 +70,59 @@
     "Dismiss": [
         "Abbrechen"
     ],
+    "Freetext Task": [
+        "Freitext Aufgabe"
+    ],
     "Link Task": [
         "Aufgabe verkn\u00fcpfen"
     ],
     "Other cells are linked to this solution cell. Proceeding with this action will break these links!": [
         "Andere Zellen sind mit dieser L\u00f6sungszelle verkn\u00fcpft. Wenn Sie fortfahren, werden diese Verkn\u00fcpfungen entfernt!"
     ],
+    "Points": [
+        "Punktzahl"
+    ],
+    "Points must be a finite number": [
+        "Die Punktzahl muss positive sein"
+    ],
+    "Points must be at least 0": [
+        "Die Punktzahl muss mindestens 0 betragen"
+    ],
+    "Points:": [
+        "Punktzahl:"
+    ],
     "Proceed and break links": [
         "Fortfahren und Verkn\u00fcpfungen entfernen"
     ],
+    "Save": [
+        "Speichern"
+    ],
+    "Task": [
+        "Aufgabe"
+    ],
     "Task Link": [
         "Aufgabenverkn\u00fcpfung"
+    ],
+    "Task Name": [
+        "Aufgabenname"
+    ],
+    "Task Properties": [
+        "Aufgabeneigenschaften"
+    ],
+    "This task name is already in use. Please choose a unique task name.": [
+        "Dieser Aufgabenname wird bereits verwendet. Bitte w\u00e4hlen Sie einen eindeutigen Namen."
+    ],
+    "This task name is not unique!": [
+        "Dieser Aufgabenname ist nicht eindeutig!"
+    ],
+    "link to task": [
+        "mit Aufgabe verkn\u00fcpfen"
+    ],
+    "settings\u0004Show Add Task Dialog": [
+        "Aufgabe Hinzuf\u00fcgen Dialog zeigen"
+    ],
+    "settings\u0004Will display a dialog upon creation of a new task, prompting the user provide a task name and define the number of points.": [
+        "Zeigt einen Dialog, welcher den Nutzer bzw. die Nutzerin auffordert einen Aufgabennamenund eine Punktzahl festzulegen, sobald eine neue Aufgabe hinzugef\u00fcgt wird."
     ],
     "toolbar\u0004Add Automatically Graded Task": [
         "Automatisch Bewertete Aufgabe Hinzuf\u00fcgen"

@@ -35,7 +35,11 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
       return INVALID_CELL_TYPE_ERROR_MESSAGE;
     }
     return this._trans.__(
-      `Creates a new task with ${NbgraderCellTypes.cellTypeLabels[(args as AddNbGraderTaskCommand.IArgs).nbGraderCellType]} and a ${(args as AddNbGraderTaskCommand.IArgs).cellType} solution.`
+      'Creates a new task with %1 in %2.',
+      NbgraderCellTypes.cellTypeLabels[
+        (args as AddNbGraderTaskCommand.IArgs).nbGraderCellType
+      ],
+      (args as AddNbGraderTaskCommand.IArgs).cellType
     );
   };
 

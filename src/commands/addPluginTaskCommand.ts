@@ -24,7 +24,10 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
       return INVALID_CELL_TYPE_ERROR_MESSAGE;
     }
     return this._trans.__(
-      `Creates a new task with ${this._cellRegistry.getPluginLabel((args as AddPluginTaskCommand.IArgs).cellType)}`
+      'Creates a new %1 task',
+      this._cellRegistry.getPluginLabel(
+        (args as AddPluginTaskCommand.IArgs).cellType
+      ) as string
     );
   };
 

@@ -80,7 +80,7 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
         args: {
           cellType: plugin.cellType
         },
-        label: this._trans.__(`${plugin.label} Task`)
+        label: this._trans.__('%1 Task', plugin.label)
       }))
     ];
     this.update();

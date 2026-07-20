@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: e2xgrader_teacher \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-15 14:49+0000\n"
+"POT-Creation-Date: 2026-07-20 15:16+0000\n"
 "PO-Revision-Date: 2026-06-15 14:49+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -31,6 +31,10 @@ msgid "✔"
 msgstr ""
 
 msgctxt "toolbar"
+msgid "Authoring Toolbar"
+msgstr ""
+
+msgctxt "toolbar"
 msgid "test"
 msgstr ""
 
@@ -54,58 +58,213 @@ msgctxt "toolbar"
 msgid "e²x"
 msgstr ""
 
+msgctxt "settings"
+msgid ""
+"Will display a dialog upon creation of a new task, prompting the user "
+"provide a task name and define the number of points."
+msgstr ""
+"Zeigt einen Dialog, welcher den Nutzer bzw. die Nutzerin auffordert einen "
+"Aufgabennamenund eine Punktzahl festzulegen, sobald eine neue Aufgabe "
+"hinzugefügt wird."
+
+msgctxt "settings"
+msgid "Show Add Task Dialog"
+msgstr "Aufgabe Hinzufügen Dialog zeigen"
+
+#: src/AddTaskWidget.ts:34
+msgid "Task"
+msgstr "Aufgabe"
+
+#: src/AddTaskWidget.ts:48
+msgid "Freetext Task"
+msgstr "Freitext Aufgabe"
+
+#: src/AddTaskWidget.ts:57
+msgid "Code Task (Manually Graded)"
+msgstr "Manuell Bewertete Aufgabe"
+
+#: src/AddTaskWidget.ts:66
+msgid "Code Task (Automatically Graded)"
+msgstr "Automatisch Bewertete Aufgabe"
+
+#: src/AddTaskWidget.ts:83
+msgid "%1 Task"
+msgstr "%1 Aufgabe"
+
+#: src/cell-toolbar/task-links/taskLinkWarningDialog.ts:13
+#: src/cell-toolbar/toolbar.tsx:323
+msgid "Task Link"
+msgstr "Aufgabenverknüpfung"
+
+#: src/cell-toolbar/task-links/taskLinkWarningDialog.ts:14
+msgid ""
+"Other cells are linked to this solution cell. Proceeding with this action "
+"will break these links!"
+msgstr ""
+"Andere Zellen sind mit dieser Lösungszelle verknüpft. Wenn Sie fortfahren,"
+" werden diese Verknüpfungen entfernt!"
+
+#: src/cell-toolbar/task-links/taskLinkWarningDialog.ts:19
+#: src/cell-toolbar/toolbar.tsx:330
+msgid "Dismiss"
+msgstr "Abbrechen"
+
+#: src/cell-toolbar/task-links/taskLinkWarningDialog.ts:23
+msgid "Proceed and break links"
+msgstr "Fortfahren und Verknüpfungen entfernen"
+
+#: src/cell-toolbar/toolbar.tsx:203
+msgid "This task name is not unique!"
+msgstr "Dieser Aufgabenname ist nicht eindeutig!"
+
+#: src/cell-toolbar/toolbar.tsx:258 src/taskPropertiesDialog.tsx:79
+msgid "Points must be a finite number"
+msgstr "Die Punktzahl muss positive sein"
+
+#: src/cell-toolbar/toolbar.tsx:260 src/taskPropertiesDialog.tsx:83
+msgid "Points must be at least 0"
+msgstr "Die Punktzahl muss mindestens 0 betragen"
+
+#: src/cell-toolbar/toolbar.tsx:268
+msgid "Points:"
+msgstr "Punktzahl:"
+
+#: src/cell-toolbar/toolbar.tsx:334
+msgid "Link Task"
+msgstr "Aufgabe verknüpfen"
+
+#: src/cell-toolbar/toolbar.tsx:353
+msgid "link to task"
+msgstr "mit Aufgabe verknüpfen"
+
 #: src/commands/addAutograderTestCommand.ts:20
 msgid "Add Autograder Test Cell"
 msgstr "Autograder Test Zelle Hinzufügen"
 
 #: src/commands/addAutograderTestCommand.ts:24
 msgid "Add a autograder test that is linked to this cell"
-msgstr "Fügt einen autograder test hinzu, welcher mit dieser Zelle verknüpft ist."
+msgstr ""
+"Fügt einen autograder test hinzu, welcher mit dieser Zelle verknüpft ist."
 
-#: src/commands/addNbGraderTaskCommand.ts:22
+#: src/commands/addAutograderTestCommand.ts:46
+msgid ""
+"# Test\n"
+"\n"
+"# Please write your code test here.\n"
+"\n"
+msgstr ""
+"# Test\n"
+"\n"
+"# Bitte schreiben Sie hier Ihren Testcode.\n"
+"\n"
+
+#: src/commands/addNbGraderTaskCommand.ts:30
 msgid "Add new NbGrader Task"
 msgstr "NbGrader Aufgabe Hinzufügen"
 
-#: src/commands/addTaskDescriptionCommand.ts:20
+#: src/commands/addNbGraderTaskCommand.ts:37
+msgid "Creates a new task with %1 in %2."
+msgstr "Erzeugt eine neue %1 Aufgabe mit %2 Antwort."
+
+#: src/commands/addNbGraderTaskCommand.ts:80
+msgid ""
+"## Answer\n"
+"\n"
+"Please write your markdown answer here."
+msgstr ""
+"## Answer\n"
+"\n"
+"Bitte schreiben Sie hier Ihren Markdown Antwort."
+
+#: src/commands/addNbGraderTaskCommand.ts:88
+msgid ""
+"# Answer\n"
+"\n"
+"# Please write your code answer here.\n"
+"\n"
+msgstr ""
+"# Antwort\n"
+"\n"
+"# Bitte programmieren Sie hier Ihre Antwort.\n"
+"\n"
+
+#: src/commands/addNbGraderTaskCommand.ts:97
+msgid ""
+"Answer\n"
+"\n"
+"Write your answer here.\n"
+"\n"
+msgstr ""
+"Antwort\n"
+"\n"
+"Schreiben Sie hier Ihre Antwort.\n"
+"\n"
+
+#: src/commands/addPluginTaskCommand.ts:19
+msgid "Add new Plugin Task"
+msgstr "Plugin Aufgabe Hinzufügen"
+
+#: src/commands/addPluginTaskCommand.ts:26
+msgid "Creates a new %1 task"
+msgstr "Erzeugt eine neue %1 Aufgabe"
+
+#: src/commands/addTaskDescriptionCommand.ts:16
 msgid "Add Task Description Cell"
 msgstr "Aufgabenstellung Hinzufügen"
 
-#: src/commands/addTaskDescriptionCommand.ts:24
+#: src/commands/addTaskDescriptionCommand.ts:20
 msgid "Add a task description that is linked to this cell"
-msgstr "Fügt eine Aufgabenstellung hinzu, welche mit dieser Zelle verknüpft ist."
+msgstr ""
+"Fügt eine Aufgabenstellung hinzu, welche mit dieser Zelle verknüpft ist."
 
-#: src/commands/deleteCellCommand.ts:16
+#: src/commands/addTaskDescriptionCommand.ts:39
+msgid ""
+"## Question\n"
+"\n"
+"Please write your question here."
+msgstr ""
+"## Frage\n"
+"\n"
+"Bitte Schreiben Sie hier Ihre Aufgabenstellung."
+
+#: src/commands/deleteCellCommand.ts:19
 msgid "Delete Cell"
 msgid_plural "Delete Cells"
 msgstr[0] "Zelle Löschen"
 msgstr[1] "Zellen Löschen"
 
-#: src/commands/deleteCellCommand.ts:24
+#: src/commands/deleteCellCommand.ts:27
 msgid "Delete this cell"
 msgid_plural "Delete these %1 cells"
 msgstr[0] "Diese Zelle löschen"
 msgstr[1] "Diese %1 Zellen löschen"
 
-#: src/taskLinkWarningDialog.ts:10
-msgid ""
-"Other cells are linked to this solution cell. Proceeding with this action "
-"will break these links!"
-msgstr ""
-"Andere Zellen sind mit dieser Lösungszelle verknüpft. Wenn Sie fortfahren, "
-"werden diese Verknüpfungen entfernt!"
+#: src/taskPropertiesDialog.tsx:100
+msgid "Points"
+msgstr "Punktzahl"
 
-#: src/taskLinkWarningDialog.ts:13 src/toolbar.tsx:181
-msgid "Dismiss"
+#: src/taskPropertiesDialog.tsx:21
+msgid "Task Properties"
+msgstr "Aufgabeneigenschaften"
+
+#: src/taskPropertiesDialog.tsx:25
+msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/taskLinkWarningDialog.ts:17
-msgid "Proceed and break links"
-msgstr "Fortfahren und Verknüpfungen entfernen"
+#: src/taskPropertiesDialog.tsx:29
+msgid "Add Task"
+msgstr "Aufgabe Hinzufügen"
 
-#: src/taskLinkWarningDialog.ts:9 src/toolbar.tsx:177
-msgid "Task Link"
-msgstr "Aufgabenverknüpfung"
+#: src/taskPropertiesDialog.tsx:33
+msgid "Save"
+msgstr "Speichern"
 
-#: src/toolbar.tsx:185
-msgid "Link Task"
-msgstr "Aufgabe verknüpfen"
+#: src/taskPropertiesDialog.tsx:54
+msgid "This task name is already in use. Please choose a unique task name."
+msgstr ""
+"Dieser Aufgabenname wird bereits verwendet. Bitte wählen Sie einen "
+"eindeutigen Namen."
+
+#: src/taskPropertiesDialog.tsx:99
+msgid "Task Name"
+msgstr "Aufgabenname"

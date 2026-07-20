@@ -5,7 +5,7 @@ import {
   NbgraderCellType,
   NbgraderCellTypes
 } from '@e2xgrader/core';
-import { Toolbar, lockIcon } from '@jupyterlab/ui-components';
+import { Toolbar, lockIcon, addIcon } from '@jupyterlab/ui-components';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
 import CellTypeSelector from './CellTypeSelector';
 import React from 'react';
@@ -241,7 +241,7 @@ export namespace TeacherCellToolbar {
 
     constructor(
       toolbar: E2xGraderCellToolbar.CellToolbar,
-      private trans: TranslationBundle
+      private _trans: TranslationBundle
     ) {
       super(toolbar);
     }
@@ -255,9 +255,9 @@ export namespace TeacherCellToolbar {
 
     handleErrors(errors: string[]): void {
       if (errors.includes('finiteNumber')) {
-        this.errorMessage = this.trans.__('Points must be a finite number');
+        this.errorMessage = this._trans.__('Points must be a finite number');
       } else if (errors.includes('min')) {
-        this.errorMessage = this.trans.__('Points must be at least 0');
+        this.errorMessage = this._trans.__('Points must be at least 0');
       } else {
         this.errorMessage = undefined;
       }
@@ -265,12 +265,13 @@ export namespace TeacherCellToolbar {
     }
 
     renderElement(): React.JSX.Element {
+      const pointsLabel: string = this._trans.__('Points:');
       return this.gradingCellModel?.hasPoints ? (
         <div
           className="e2xgrader-Points e2x-controls"
           title={this.errorMessage}
         >
-          <label>Points: </label>
+          <label>{pointsLabel} </label>
           <PointsInput
             initialPoints={this.gradingCellModel?.nbgraderMetadata?.points ?? 0}
             onChange={e => this.setPoints(e)}
@@ -349,18 +350,22 @@ export namespace TeacherCellToolbar {
       const solutionCells: GradingCellModel[] = this.getSolutionCells();
       const linkedTaskCell: GradingCellModel | undefined =
         this.findLinkedTaskCell(solutionCells);
+      const linkTaskButtonSpan: string = this.trans.__('link to task');
 
       return this.gradingCellModel?.isLinkable ? (
         this.gradingCellModel?.for ? (
-          <div className="e2xgrader-TaskLink linked">
+          <div className={'e2xgrader-TaskLink linked'}>
             <a onClick={() => this.showSelectionDialog()}>
-              <linkIcon.react className="e2xgrader-LinkIcon" />{' '}
-              {linkedTaskCell?.taskName}
+              <linkIcon.react className="e2xgrader-LinkIcon" />
+              <span>{linkedTaskCell?.taskName}</span>
             </a>
           </div>
         ) : (
-          <div className="e2xgrader-TaskLink">
-            <a onClick={() => this.showSelectionDialog()}>+ link to task</a>
+          <div className={'e2xgrader-TaskLink'}>
+            <a onClick={() => this.showSelectionDialog()}>
+              <addIcon.react className="e2xgrader-LinkIcon" />
+              <span>{linkTaskButtonSpan}</span>
+            </a>
           </div>
         )
       ) : (
