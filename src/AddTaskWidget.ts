@@ -5,7 +5,6 @@ import {
   ToolbarDropdownComponent
 } from '@e2xgrader/core';
 import {
-  CommandToolbarButtonComponent,
   LabIcon
 } from '@jupyterlab/ui-components';
 import { CommandRegistry } from '@lumino/commands';
@@ -17,7 +16,7 @@ const TOOLBAR_ADD_TASK_CLASS: string =
 
 export class AddTaskWidget extends ToolbarDropdownComponent {
   private readonly _pr: ToolbarDropdownComponent.IProps;
-  private readonly defaultNbGraderTaskCommands: CommandToolbarButtonComponent.IProps[];
+  private readonly defaultNbGraderTaskCommands: (ToolbarDropdownComponent.IDropdownCommandProps | ToolbarDropdownComponent.IDropdownSpacerProps)[];
 
   constructor(
     private _trans: TranslationBundle,
@@ -26,13 +25,15 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
   ) {
     super({
       id: AddTaskWidget.WIDGET_ID,
-      commands: []
+      dropdownItems: [],
+      commands: _commandRegistry
     });
     this._pr = {
       id: AddTaskWidget.WIDGET_ID,
       icon: LabIcon.resolve({ icon: 'ui-components:add' }),
       label: this._trans.__('Task'),
-      commands: []
+      dropdownItems: [],
+      commands: _commandRegistry
     };
     this.setProps(this._pr);
     this.addClass(TOOLBAR_ADD_TASK_CLASS);
@@ -45,7 +46,8 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
           cellType: 'markdown',
           nbGraderCellType: NbgraderCellType.MANUALLY_GRADED_ANSWER
         },
-        label: this._trans.__('Freetext Task')
+        label: this._trans.__('Freetext Task'),
+        type: 'command'
       },
       {
         commands: this._commandRegistry,
@@ -54,7 +56,8 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
           cellType: 'code',
           nbGraderCellType: NbgraderCellType.MANUALLY_GRADED_ANSWER
         },
-        label: this._trans.__('Code Task (Manually Graded)')
+        label: this._trans.__('Code Task (Manually Graded)'),
+        type: 'command'
       },
       {
         commands: this._commandRegistry,
@@ -63,7 +66,8 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
           cellType: 'code',
           nbGraderCellType: NbgraderCellType.AUTOGRADED_ANSWER
         },
-        label: this._trans.__('Code Task (Automatically Graded)')
+        label: this._trans.__('Code Task (Automatically Graded)'),
+        type: 'command'
       }
     ];
 
@@ -72,7 +76,7 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
   }
 
   updateCommands(): void {
-    this._pr.commands = [
+    this._pr.dropdownItems = [
       ...this.defaultNbGraderTaskCommands,
       ...this._cellRegistry.getPlugins().map(plugin => ({
         commands: this._commandRegistry,
@@ -80,7 +84,8 @@ export class AddTaskWidget extends ToolbarDropdownComponent {
         args: {
           cellType: plugin.cellType
         },
-        label: this._trans.__('%1 Task', plugin.label)
+        label: this._trans.__('%1 Task', plugin.label),
+        type: 'command' as 'command'
       }))
     ];
     this.update();

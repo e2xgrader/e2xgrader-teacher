@@ -1,8 +1,7 @@
 import { CommandRegistry } from '@lumino/commands';
 import {
-  CellPresets,
-  E2xGraderMetadata,
-  NbGraderAutograding,
+  //CellPresets,
+  //NbGraderAutograding,
   NbgraderCellType,
   NbgraderCellTypes
 } from '@e2xgrader/core';
@@ -57,7 +56,7 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
       taskName?: string,
       points?: number
     ) => Promise<void> = async (
-      taskName: string = E2xGraderMetadata.getNewTaskName(),
+      taskName: string = "",
       points: number = 0
     ) => {
       const notebook: Notebook | undefined =
@@ -65,16 +64,16 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
       if (!notebook || this.isInvalidArgs(args)) {
         return;
       }
-      const cellType: jupyterCellTypes =
+      /*const cellType: jupyterCellTypes =
         (args as AddNbGraderTaskCommand.IArgs).cellType ??
-        notebook.notebookConfig.defaultCell;
+        notebook.notebookConfig.defaultCell;*/
       const nbGraderCellType:
         | NbgraderCellType.MANUALLY_GRADED_ANSWER
         | NbgraderCellType.AUTOGRADED_ANSWER = (
         args as AddNbGraderTaskCommand.IArgs
       ).nbGraderCellType;
       const newCellIndex: number = notebook.activeCellIndex + 1;
-      let source: string;
+      /*let source: string;
       switch (cellType) {
         case 'markdown':
           source = this._trans.__(
@@ -106,7 +105,7 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
           points
         }),
         source: source
-      });
+      });*/
       notebook.activeCellIndex = newCellIndex;
       if (nbGraderCellType === NbgraderCellType.AUTOGRADED_ANSWER) {
         await this._app.commands.execute(AddAutograderTestCommand.COMMAND_ID);

@@ -1,4 +1,4 @@
-import { GradingCellModel } from '@e2xgrader/core';
+import {E2xGraderMetadata} from '@e2xgrader/core';
 import React, { useState } from 'react';
 
 export const TASK_LINK_SELECTOR_CLASS = 'e2xgrader-task-link-selector';
@@ -6,28 +6,28 @@ export const TASK_LINK_SELECTOR_CLASS = 'e2xgrader-task-link-selector';
 export default function TaskLinkSelector({
   initiallyLinkedTask,
   onChange,
-  solutionCells
+  tasks
 }: {
-  initiallyLinkedTask: string | string[] | undefined;
-  onChange: (val: string | undefined) => any;
-  solutionCells: GradingCellModel[];
+  initiallyLinkedTask: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined;
+  onChange: (val: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined) => any;
+  tasks: E2xGraderMetadata.IE2xGraderTaskMetadata[];
 }): React.JSX.Element {
-  const [linkedTask, setLinkedTask] = useState(initiallyLinkedTask);
+  const [linkedTaskId, setLinkedTaskId] = useState(initiallyLinkedTask?.id);
 
   function handleChange(val: string | undefined) {
-    setLinkedTask(val);
-    onChange(val);
+    setLinkedTaskId(val);
+    onChange(val ? tasks.find(task => task.id === val) : undefined);
   }
 
   return (
     <select
       className={TASK_LINK_SELECTOR_CLASS}
-      value={linkedTask}
+      value={linkedTaskId}
       onChange={e => handleChange(e.target.value)}
     >
-      <option value={undefined}>-</option>
-      {solutionCells.map(cell => (
-        <option value={cell.id}>{cell.taskName}</option>
+      <option value={undefined} key={undefined}>-</option>
+      {tasks.map(task => (
+        <option value={task.id} key={task.id}>{task.name}</option>
       ))}
     </select>
   );

@@ -3,8 +3,8 @@ import { INotebookTracker, Notebook } from '@jupyterlab/notebook';
 import { TranslationBundle } from '@jupyterlab/translation';
 import {
   GradingCellModel,
-  CellPresets,
-  NbGraderAutograding
+  //CellPresets,
+  //NbGraderAutograding
 } from '@e2xgrader/core';
 import { getCurrentGradingCell } from '../util/AuthoringCommands';
 
@@ -38,7 +38,7 @@ export class AddAutograderTestCommand
       return;
     }
     const newCellIndex: number = notebook.activeCellIndex + 1;
-    notebook.model?.sharedModel.insertCell(newCellIndex, {
+    /*notebook.model?.sharedModel.insertCell(newCellIndex, {
       ...CellPresets.getAutograderTestPreset(currentGradingCell?.id),
       source:
         NbGraderAutograding.TEST_START_SEQUENCE +
@@ -47,7 +47,7 @@ export class AddAutograderTestCommand
           '# Test\n' + '\n' + '# Please write your code test here.\n' + '\n'
         ) +
         NbGraderAutograding.TEST_END_SEQUENCE
-    });
+    });*/
     notebook.activeCellIndex = newCellIndex;
   };
 }

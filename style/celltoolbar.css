@@ -18,35 +18,53 @@
   }
 
   .e2xgrader-TaskLink {
-    padding: 0.15rem 0.4rem;
+    --e2x-task-link-border-radius: 50rem;
     margin: -0.15rem 0 -0.15rem 0.25rem;
-    border-radius: 50rem;
-    border: var(--jp-border-width) dashed currentcolor;
-    cursor: pointer;
+    border-radius: var(--e2x-task-link-border-radius);
     display: flex;
-    align-items: center;
+    align-items: stretch;
 
-    a {
+    &>div {
+      padding: 0.15rem 0.3rem;
+    }
+
+    &>div:first-child {
+      padding-left: 0.4rem;
+      border-radius: var(--e2x-task-link-border-radius) 0 0 var(--e2x-task-link-border-radius);
+    }
+
+    &>div:last-child {
+      padding-right: 0.4rem;
+      border-radius: 0 var(--e2x-task-link-border-radius) var(--e2x-task-link-border-radius) 0;
+    }
+
+    .e2xgrader-task-name-placeholder {
+      border: var(--jp-border-width) dashed currentcolor;
+      border-right-width: 0;
+    }
+
+    .e2xgrader-task-link-button {
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
+      cursor: pointer;
     }
 
-    &:hover {
-      background-color: #00000010;
-    }
-
-    &.linked {
+    .e2xgrader-task-name, .e2xgrader-task-link-button {
       border: none;
       background-color: var(--md-indigo-400);
       color: white;
-
-      &:hover {
-        background-color: var(--md-indigo-500);
-      }
     }
 
-    .e2xgrader-LinkIcon {
+    .e2xgrader-task-link-button:hover {
+      background-color: var(--md-indigo-500);
+    }
+
+    .e2xgrader-EditIcon{
+      font-size: 0.9rem;
+    }
+
+    .e2xgrader-LinkIcon, .e2xgrader-AddIcon, .e2xgrader-EditIcon {
       display: inline-flex;
       align-items: center;
 

@@ -1,5 +1,5 @@
 import { TranslationBundle } from '@jupyterlab/translation';
-import { E2xGraderCellRegistry, E2xGraderMetadata } from '@e2xgrader/core';
+import { E2xGraderCellRegistry } from '@e2xgrader/core';
 import { CommandRegistry } from '@lumino/commands';
 import { INotebookTracker, Notebook } from '@jupyterlab/notebook';
 import { showTaskPropertiesDialog } from '../taskPropertiesDialog';
@@ -45,7 +45,7 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
       taskName?: string,
       points?: number
     ) => Promise<void> = async (
-      taskName: string = E2xGraderMetadata.getNewTaskName(),
+      taskName: string = "",
       points: number = 0
     ) => {
       const notebook: Notebook | undefined =
@@ -61,10 +61,10 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
         return;
       }
       const newCellIndex: number = notebook.activeCellIndex + 1;
-      notebook.model?.sharedModel.insertCells(
+      /*notebook.model?.sharedModel.insertCells(
         newCellIndex,
         plugin.getTaskPreset(taskName, points)
-      );
+      );*/
       notebook.activeCellIndex = newCellIndex;
     };
 

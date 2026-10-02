@@ -30,9 +30,9 @@ export default function CellTypeSelector({
 
   return (
     <select value={currentType} onChange={e => updateCellType(e.target.value)}>
-      <option value="">-</option>
+      <option value="" key={undefined}>-</option>
       {options.map(([key, label]: [string, string]) => {
-        return <option value={key}>{label}</option>;
+        return <option value={key} key={key} >{label}</option>;
       })}
     </select>
   );

@@ -1,35 +1,33 @@
 import {
   E2xGraderCellToolbar,
   E2xGraderCellRegistry,
-  GradingCellModel,
-  NbgraderCellType,
-  NbgraderCellTypes
+  //GradingCellModel,
+  //NbgraderCellType,
+  //NbgraderCellTypes,
+  E2xGraderMetadata
 } from '@e2xgrader/core';
-import { Toolbar, lockIcon, addIcon } from '@jupyterlab/ui-components';
+import { Toolbar, lockIcon, addIcon, editIcon, linkIcon } from '@jupyterlab/ui-components';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
 import CellTypeSelector from './CellTypeSelector';
 import React from 'react';
-import TaskNameInput, {
-  TASK_NAME_MIN_LENGTH,
-  TASK_NAME_MAX_LENGTH
-} from './TaskNameInput';
 import PointsInput from './PointsInput';
 import { Notebook } from '@jupyterlab/notebook';
 import { TaskLinkModal } from './task-links/TaskLinkModal';
 import { TranslationBundle } from '@jupyterlab/translation';
-import { linkIcon } from '@jupyterlab/ui-components';
-import { showTaskLinkWarningDialog } from './task-links/taskLinkWarningDialog';
+/*import { showTaskLinkWarningDialog } from './task-links/taskLinkWarningDialog';
 import {
   findLinkedCells,
-  isLinkedCell,
   removeLink
-} from '../util/GradingCellLinks';
+} from '../util/GradingCellLinks';*/
 import { Signal } from '@lumino/signaling';
-import { Message } from '@lumino/messaging';
+import {TaskNameModal} from "./task-links/TaskNameModal";
+import {findTaskCells} from "./task-links/util";
+import {Message} from "@lumino/messaging";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
 
+export const SAVE_TASK_BUTTON_CLASS = 'e2xgrader-save-task-button';
 export const LINK_TASK_BUTTON_CLASS = 'e2xgrader-link-task-button';
 export const DISMISS_LINK_TASK_BUTTON_CLASS =
   'e2xgrader-dismiss-link-task-button';
@@ -65,7 +63,7 @@ export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
 
   protected announceMetaDataUpdate = (): void => {
     if (this.gradingCellModel) {
-      this.cellMetaDataChange.emit(this.gradingCellModel.id);
+      this.cellMetaDataChange.emit(this.gradingCellModel.id ?? '');
     }
   };
 
@@ -98,27 +96,23 @@ export namespace TeacherCellToolbar {
       return this._trans;
     }
 
-    protected getSolutionCells(): GradingCellModel[] {
-      return (
-        (this.cell?.parent as Notebook)?.widgets
-          .map(cell => new GradingCellModel(cell.model.sharedModel))
-          .filter(cell => cell.isSolution) ?? []
-      );
+    protected getNotebook(): Notebook {
+      return this.cell?.parent as Notebook;
     }
   }
 
   export class TypeSelector extends E2xGraderCellToolbar.ToolbarElement {
     constructor(
       toolbar: TeacherCellToolbar,
-      private trans: TranslationBundle
+      //private trans: TranslationBundle
     ) {
       super(toolbar);
     }
 
     setCellType(newType: string): void {
-      const proceedSettingType = (): void => {
+      /*const proceedSettingType = (): void => {
         if (this.gradingCellModel) {
-          this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
+          //this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
         }
         this.update();
         this.parent?.update();
@@ -151,7 +145,7 @@ export namespace TeacherCellToolbar {
         }
       } else {
         proceedSettingType();
-      }
+      }*/
     }
 
     renderElement(): React.JSX.Element {
@@ -163,75 +157,6 @@ export namespace TeacherCellToolbar {
             cellRegistry={this.cellRegistry}
           />
         </div>
-      );
-    }
-  }
-
-  export class CellTaskNameInput extends TeacherCellToolbarElement {
-    private otherTaskNames: string[] = [];
-    private errorMessage: string | undefined;
-
-    constructor(
-      teacherToolbar: TeacherCellToolbar,
-      trans: TranslationBundle,
-      cellMetaDataChange: Signal<any, string>
-    ) {
-      super(teacherToolbar, trans);
-      cellMetaDataChange.connect((sender: any, cellId: string) => {
-        if (!this.gradingCellModel?.isLinkTarget) {
-          return;
-        } //do nothing if this cell should not have a name
-        this.otherTaskNames = this.getSolutionCells()
-          .filter(gradingCell => gradingCell.id !== this.gradingCellModel?.id) //remove the current cell
-          .map(gradingCell => gradingCell.taskName)
-          .filter(name => name) as string[]; //remove all undefined names
-        this.update();
-        this.parent?.update();
-      });
-      console.log('taskNameInput initialized');
-    }
-
-    setTaskName(newName: string): void {
-      if (!this.gradingCellModel) {
-        return;
-      }
-      this.gradingCellModel.taskName = newName;
-    }
-
-    handleErrors(errors: string[]): void {
-      if (errors.includes('duplicate')) {
-        this.errorMessage = this.trans.__('This task name is not unique!');
-      } else if (errors.includes('minLength')) {
-        this.errorMessage = this.trans._n(
-          `The task name must be at least ${TASK_NAME_MIN_LENGTH} character long!`,
-          `The task name must be at least ${TASK_NAME_MIN_LENGTH} characters long!`,
-          TASK_NAME_MIN_LENGTH
-        );
-      } else if (errors.includes('maxLength')) {
-        this.errorMessage = this.trans.__(
-          `The task name must not be more than ${TASK_NAME_MAX_LENGTH} characters long!`
-        );
-      } else {
-        this.errorMessage = undefined;
-      }
-      this.update();
-    }
-
-    renderElement(): React.JSX.Element {
-      return this.gradingCellModel?.isLinkTarget ? (
-        <div
-          className="e2xgrader-TaskName e2x-controls"
-          title={this.errorMessage}
-        >
-          <TaskNameInput
-            initialName={this.gradingCellModel?.taskName ?? ''}
-            otherTaskNames={this.otherTaskNames}
-            onChange={e => this.setTaskName(e)}
-            onError={e => this.handleErrors(e)}
-          />
-        </div>
-      ) : (
-        <></>
       );
     }
   }
@@ -285,45 +210,44 @@ export namespace TeacherCellToolbar {
   }
 
   export class CellTaskLink extends TeacherCellToolbarElement {
+    private linkId;
+    static currentLinkId = 0;
     constructor(
       teacherToolbar: TeacherCellToolbar,
       trans: TranslationBundle,
       cellMetaDataChange: Signal<any, string>
     ) {
       super(teacherToolbar, trans);
-      cellMetaDataChange.connect((sender: any, cellId: string) => {
-        if (
-          !this.gradingCellModel ||
-          (!isLinkedCell(this.gradingCellModel, cellId) &&
-            cellId !== this.gradingCellModel.id)
-        ) {
+      this.linkId = CellTaskLink.currentLinkId++;
+      cellMetaDataChange.connect((sender: any, cellUuid: string) => {
+        if (!this.gradingCellModel || this.gradingCellModel.id !== cellUuid) {
           return;
         }
+        console.log(this.linkId, 'metadataChange received', cellUuid);
         this.update();
         this.parent?.update();
       });
     }
 
-    setLinkedTaskId(newId: string | undefined): void {
+    setLinkedTask(newTask: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined): void {
       if (!this.gradingCellModel) {
         return;
       }
-      this.gradingCellModel.for = newId;
+      this.gradingCellModel.task = newTask;
       this.update();
     }
 
-    private findLinkedTaskCell(
-      solutionCells: GradingCellModel[]
-    ): GradingCellModel | undefined {
-      return solutionCells.find(cell => cell.id === this.gradingCellModel?.for);
-    }
-
     private showSelectionDialog(): void {
+      const notebook = this.getNotebook();
+      const gradingCell = this.gradingCellModel;
+
+      if(!notebook || !gradingCell) return;
+
       showDialog({
         title: this.trans.__('Task Link'),
         body: new TaskLinkModal(
-          this.gradingCellModel?.for,
-          this.getSolutionCells()
+          notebook,
+          gradingCell
         ),
         buttons: [
           Dialog.cancelButton({
@@ -337,39 +261,91 @@ export namespace TeacherCellToolbar {
         ]
       }).then(result => {
         if (result.button.accept) {
-          this.setLinkedTaskId(
-            !result.value || result.value === '-'
-              ? undefined
-              : (result.value as string)
-          );
+          this.setLinkedTask(result.value ?? undefined);
+        }
+      });
+    }
+
+    private updateTask(updatedTask: E2xGraderMetadata.IE2xGraderTaskMetadata): void {
+      findTaskCells(this.getNotebook(), updatedTask.id).forEach(cell => cell.task = updatedTask);
+      this.update();
+    }
+
+    private async launchTaskEditorDialog(task: E2xGraderMetadata.IE2xGraderTaskMetadata): Promise<Dialog.IResult<{isValid: boolean, task: E2xGraderMetadata.IE2xGraderTaskMetadata}> | undefined>{
+      const notebook = this.getNotebook();
+
+      if(!notebook) return;
+
+      return showDialog({
+        title: this.trans.__('Task Name'),
+        body: new TaskNameModal(
+          notebook,
+          task,
+          this.trans
+        ),
+        buttons: [
+          Dialog.cancelButton({
+            label: this.trans.__('Dismiss'),
+            className: DISMISS_LINK_TASK_BUTTON_CLASS
+          }),
+          Dialog.okButton({
+            label: this.trans.__('Save'),
+            className: SAVE_TASK_BUTTON_CLASS
+          })
+        ]
+      });
+    }
+
+    private showCreateDialog(): void {
+      if(!this.gradingCellModel || this.gradingCellModel.task) return; // do not create a new task if either the gradingCellModel is not available or the cell already belongs to a task
+
+      const newTask = E2xGraderMetadata.getNewTaskMetadata();
+
+      this.launchTaskEditorDialog(newTask).then(result => {
+        if (result?.button.accept && result.value?.isValid) {
+          this.gradingCellModel!.task = result.value.task;
+        }
+      });
+    }
+
+    private showEditDialog(): void {
+      const gradingCell = this.gradingCellModel;
+
+      if(!gradingCell || !gradingCell.task) return;
+
+      this.launchTaskEditorDialog(gradingCell.task).then(result => {
+        if (result?.button.accept && result.value?.isValid) {
+          this.updateTask(result.value.task);
         }
       });
     }
 
     renderElement(): React.JSX.Element {
-      const solutionCells: GradingCellModel[] = this.getSolutionCells();
-      const linkedTaskCell: GradingCellModel | undefined =
-        this.findLinkedTaskCell(solutionCells);
-      const linkTaskButtonSpan: string = this.trans.__('link to task');
+      const linkTaskPlaceholder: string = this.trans.__('[no task]');
+      const editTaskButtonTitle: string = this.trans.__('edit task name');
+      const createTaskButtonTitle: string = this.trans.__('create new task');
+      const linkTaskButtonTitle: string = this.trans.__('link existing task');
+      const taskMetadata: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined = this.gradingCellModel?.task;
 
-      return this.gradingCellModel?.isLinkable ? (
-        this.gradingCellModel?.for ? (
-          <div className={'e2xgrader-TaskLink linked'}>
-            <a onClick={() => this.showSelectionDialog()}>
-              <linkIcon.react className="e2xgrader-LinkIcon" />
-              <span>{linkedTaskCell?.taskName}</span>
-            </a>
+      return (
+        <div className={'e2xgrader-TaskLink'}>
+          { taskMetadata?.id ?
+              <React.Fragment>
+                <div className={'e2xgrader-task-name'} >{taskMetadata?.name}</div>
+                <div className={'e2xgrader-task-link-button'} onClick={() => this.showEditDialog()} title={editTaskButtonTitle}>
+                  <editIcon.react className="e2xgrader-EditIcon" />
+                </div>
+              </React.Fragment> :
+              <React.Fragment>
+                <div className={'e2xgrader-task-name-placeholder'}>{linkTaskPlaceholder}</div>
+                <div className={'e2xgrader-task-link-button'} onClick={() => this.showCreateDialog()} title={createTaskButtonTitle}>
+                  <addIcon.react className="e2xgrader-AddIcon" />
+                </div>
+              </React.Fragment> }
+          <div className={'e2xgrader-task-link-button'} onClick={() => this.showSelectionDialog()} title={linkTaskButtonTitle}>
+            <linkIcon.react className="e2xgrader-LinkIcon" />
           </div>
-        ) : (
-          <div className={'e2xgrader-TaskLink'}>
-            <a onClick={() => this.showSelectionDialog()}>
-              <addIcon.react className="e2xgrader-LinkIcon" />
-              <span>{linkTaskButtonSpan}</span>
-            </a>
-          </div>
-        )
-      ) : (
-        <></>
+        </div>
       );
     }
   }
@@ -398,12 +374,8 @@ export namespace TeacherCellToolbar {
       trans,
       cellMetaDataChange
     );
-    toolbar.addItem('type', new TypeSelector(toolbar, trans));
+    toolbar.addItem('type', new TypeSelector(toolbar, /*trans*/));
     toolbar.addItem('label', new CellLabel(toolbar));
-    toolbar.addItem(
-      'task-name',
-      new CellTaskNameInput(toolbar, trans, cellMetaDataChange)
-    );
     toolbar.addItem(
       'task-link',
       new CellTaskLink(toolbar, trans, cellMetaDataChange)
