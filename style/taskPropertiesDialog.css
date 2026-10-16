@@ -13,10 +13,12 @@
 
     input,
     select {
+      box-sizing: border-box;
       font-size: 1rem;
       border-radius: var(--jp-border-radius);
       background-color: white;
       border: var(--jp-border-width) solid var(--jp-border-color0);
+      width: 100%;
 
       &:active,
       &:focus,

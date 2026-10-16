@@ -1,5 +1,5 @@
 import { TranslationBundle } from '@jupyterlab/translation';
-import { E2xGraderCellRegistry } from '@e2xgrader/core';
+import {E2xGraderCellRegistry, E2xGraderMetadata} from '@e2xgrader/core';
 import { CommandRegistry } from '@lumino/commands';
 import { INotebookTracker, Notebook } from '@jupyterlab/notebook';
 import { showTaskPropertiesDialog } from '../taskPropertiesDialog';
@@ -41,6 +41,12 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
   isVisible = (args: any): boolean => this.isEnabled(args);
 
   execute = async (args: any): Promise<void> => {
+    const notebook: Notebook | undefined =
+        this._tracker.currentWidget?.content;
+    if (!notebook || this.isInvalidArgs(args)) {
+      return;
+    }
+
     const addTask: (
       taskName?: string,
       points?: number
@@ -48,11 +54,6 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
       taskName: string = "",
       points: number = 0
     ) => {
-      const notebook: Notebook | undefined =
-        this._tracker.currentWidget?.content;
-      if (!notebook || this.isInvalidArgs(args)) {
-        return;
-      }
       const plugin: E2xGraderCellRegistry.IE2xGraderCellPlugin | undefined =
         this._cellRegistry.getPlugin(
           (args as AddPluginTaskCommand.IArgs).cellType
@@ -61,20 +62,20 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
         return;
       }
       const newCellIndex: number = notebook.activeCellIndex + 1;
-      /*notebook.model?.sharedModel.insertCells(
+      notebook.model?.sharedModel.insertCells(
         newCellIndex,
         plugin.getTaskPreset(taskName, points)
-      );*/
+      );
       notebook.activeCellIndex = newCellIndex;
     };
 
     if (
       this._settings.get('show_add_task_properties_dialog').composite as boolean
     ) {
-      return showTaskPropertiesDialog(this._trans, true).then(
-        (result: Dialog.IResult<{ taskName: string; points: number }>) => {
+      return showTaskPropertiesDialog(notebook, this._trans).then(
+        (result: Dialog.IResult<{ task: E2xGraderMetadata.IE2xGraderTaskMetadata; points?: number }>) => {
           if (result.button.accept) {
-            return addTask(result.value!.taskName, result.value!.points);
+            return addTask(result.value!.task.name, result.value!.points);
           }
         }
       );

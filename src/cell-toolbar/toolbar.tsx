@@ -1,9 +1,6 @@
 import {
   E2xGraderCellToolbar,
   E2xGraderCellRegistry,
-  //GradingCellModel,
-  //NbgraderCellType,
-  //NbgraderCellTypes,
   E2xGraderMetadata
 } from '@e2xgrader/core';
 import { Toolbar, lockIcon, addIcon, editIcon, linkIcon } from '@jupyterlab/ui-components';
@@ -14,15 +11,10 @@ import PointsInput from './PointsInput';
 import { Notebook } from '@jupyterlab/notebook';
 import { TaskLinkModal } from './task-links/TaskLinkModal';
 import { TranslationBundle } from '@jupyterlab/translation';
-/*import { showTaskLinkWarningDialog } from './task-links/taskLinkWarningDialog';
-import {
-  findLinkedCells,
-  removeLink
-} from '../util/GradingCellLinks';*/
 import { Signal } from '@lumino/signaling';
-import {TaskNameModal} from "./task-links/TaskNameModal";
-import {findTaskCells} from "./task-links/util";
+import {findTaskGradingCells, findAllTasks} from "./task-links/util";
 import {Message} from "@lumino/messaging";
+import {showTaskPropertiesDialog} from "../taskPropertiesDialog";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
@@ -31,6 +23,8 @@ export const SAVE_TASK_BUTTON_CLASS = 'e2xgrader-save-task-button';
 export const LINK_TASK_BUTTON_CLASS = 'e2xgrader-link-task-button';
 export const DISMISS_LINK_TASK_BUTTON_CLASS =
   'e2xgrader-dismiss-link-task-button';
+
+const AVAILABLE_TASK_COLOR_COUNT: number = 8;
 
 export class TeacherCellToolbar extends E2xGraderCellToolbar.CellToolbar {
   constructor(
@@ -103,49 +97,17 @@ export namespace TeacherCellToolbar {
 
   export class TypeSelector extends E2xGraderCellToolbar.ToolbarElement {
     constructor(
-      toolbar: TeacherCellToolbar,
-      //private trans: TranslationBundle
+      toolbar: TeacherCellToolbar
     ) {
       super(toolbar);
     }
 
     setCellType(newType: string): void {
-      /*const proceedSettingType = (): void => {
-        if (this.gradingCellModel) {
-          //this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
-        }
-        this.update();
-        this.parent?.update();
-      };
-
-      if (
-        this.gradingCellModel &&
-        this.gradingCellModel?.isSolution && // if the cell was a solution cell
-        !(
-          NbgraderCellTypes.cellTypeConfigurations[newType as NbgraderCellType]
-            ?.solution ?? false
-        )
-      ) {
-        // and the new cell type does not mark a solution cell
-        const linkedCells: GradingCellModel[] = findLinkedCells(
-          this.cell?.parent as Notebook,
-          this.gradingCellModel!.id
-        );
-        if (linkedCells.length > 0) {
-          showTaskLinkWarningDialog(this.trans).then(result => {
-            if (result.button.accept) {
-              linkedCells.forEach(cell =>
-                removeLink(cell, this.gradingCellModel!.id)
-              );
-              proceedSettingType();
-            }
-          });
-        } else {
-          proceedSettingType();
-        }
-      } else {
-        proceedSettingType();
-      }*/
+      if (this.gradingCellModel) {
+        this.gradingCellModel.switchToCellType(this.cellRegistry, newType);
+      }
+      this.update();
+      this.parent?.update();
     }
 
     renderElement(): React.JSX.Element {
@@ -267,43 +229,16 @@ export namespace TeacherCellToolbar {
     }
 
     private updateTask(updatedTask: E2xGraderMetadata.IE2xGraderTaskMetadata): void {
-      findTaskCells(this.getNotebook(), updatedTask.id).forEach(cell => cell.task = updatedTask);
+      findTaskGradingCells(this.getNotebook(), updatedTask.id).forEach(cell => cell.task = updatedTask);
       this.update();
-    }
-
-    private async launchTaskEditorDialog(task: E2xGraderMetadata.IE2xGraderTaskMetadata): Promise<Dialog.IResult<{isValid: boolean, task: E2xGraderMetadata.IE2xGraderTaskMetadata}> | undefined>{
-      const notebook = this.getNotebook();
-
-      if(!notebook) return;
-
-      return showDialog({
-        title: this.trans.__('Task Name'),
-        body: new TaskNameModal(
-          notebook,
-          task,
-          this.trans
-        ),
-        buttons: [
-          Dialog.cancelButton({
-            label: this.trans.__('Dismiss'),
-            className: DISMISS_LINK_TASK_BUTTON_CLASS
-          }),
-          Dialog.okButton({
-            label: this.trans.__('Save'),
-            className: SAVE_TASK_BUTTON_CLASS
-          })
-        ]
-      });
     }
 
     private showCreateDialog(): void {
       if(!this.gradingCellModel || this.gradingCellModel.task) return; // do not create a new task if either the gradingCellModel is not available or the cell already belongs to a task
 
-      const newTask = E2xGraderMetadata.getNewTaskMetadata();
-
-      this.launchTaskEditorDialog(newTask).then(result => {
-        if (result?.button.accept && result.value?.isValid) {
-          this.gradingCellModel!.task = result.value.task;
+      showTaskPropertiesDialog(this.getNotebook(), this.trans).then(result => {
+        if (result?.button.accept) {
+          this.gradingCellModel!.task = result.value!.task;
         }
       });
     }
@@ -313,22 +248,24 @@ export namespace TeacherCellToolbar {
 
       if(!gradingCell || !gradingCell.task) return;
 
-      this.launchTaskEditorDialog(gradingCell.task).then(result => {
-        if (result?.button.accept && result.value?.isValid) {
-          this.updateTask(result.value.task);
+      showTaskPropertiesDialog(this.getNotebook(), this.trans, gradingCell.task).then(result => {
+        if (result?.button.accept) {
+          this.updateTask(result.value!.task);
         }
       });
     }
 
     renderElement(): React.JSX.Element {
       const linkTaskPlaceholder: string = this.trans.__('[no task]');
-      const editTaskButtonTitle: string = this.trans.__('edit task name');
+      const editTaskButtonTitle: string = this.trans.__('edit task properties');
       const createTaskButtonTitle: string = this.trans.__('create new task');
       const linkTaskButtonTitle: string = this.trans.__('link existing task');
       const taskMetadata: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined = this.gradingCellModel?.task;
 
+      const taskColorClass = taskMetadata?.id ? ' colored task-color-' + ((findAllTasks(this.getNotebook()).findIndex(task => task.id === taskMetadata.id) % AVAILABLE_TASK_COLOR_COUNT) + 1) : '';
+
       return (
-        <div className={'e2xgrader-TaskLink'}>
+        <div className={'e2xgrader-TaskLink' + taskColorClass }>
           { taskMetadata?.id ?
               <React.Fragment>
                 <div className={'e2xgrader-task-name'} >{taskMetadata?.name}</div>
@@ -374,7 +311,7 @@ export namespace TeacherCellToolbar {
       trans,
       cellMetaDataChange
     );
-    toolbar.addItem('type', new TypeSelector(toolbar, /*trans*/));
+    toolbar.addItem('type', new TypeSelector(toolbar));
     toolbar.addItem('label', new CellLabel(toolbar));
     toolbar.addItem(
       'task-link',

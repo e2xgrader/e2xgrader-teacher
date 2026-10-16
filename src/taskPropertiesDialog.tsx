@@ -5,18 +5,24 @@ import * as React from 'react';
 import TaskNameInput, {
   TASK_NAME_MAX_LENGTH,
   TASK_NAME_MIN_LENGTH
-} from './cell-toolbar/TaskNameInput';
+} from './cell-toolbar/task-links/TaskNameInput';
 import PointsInput from './cell-toolbar/PointsInput';
 import { FormDialog, showFormDialog } from './FormDialog';
+import TaskLinkSelector from "./cell-toolbar/task-links/TaskLinkSelector";
+import {E2xGraderMetadata} from "@e2xgrader/core";
+import {findAllTasks} from "./cell-toolbar/task-links/util";
+import {Notebook} from "@jupyterlab/notebook";
 
 export const TASK_PROPERTIES_DIALOG_CLASS = 'e2x-task-properties-dialog';
 export const INPUT_VALIDATION_ERROR_SPAN_CLASS = 'e2x-input-validation-error';
 
 export async function showTaskPropertiesDialog(
+  notebook: Notebook,
   trans: TranslationBundle,
-  isNewTask: boolean = true
-): Promise<Dialog.IResult<{ taskName: string; points: number }>> {
-  const body = new TaskPropertiesDialogBody(trans);
+  existingTask?: E2xGraderMetadata.IE2xGraderTaskMetadata,
+  includePoints: boolean = false
+): Promise<Dialog.IResult<{ task: E2xGraderMetadata.IE2xGraderTaskMetadata; points?: number }>> {
+  const body = new TaskPropertiesDialogBody(notebook, trans, existingTask, includePoints);
   return showFormDialog({
     title: trans.__('Task Properties'),
     body: body,
@@ -24,7 +30,7 @@ export async function showTaskPropertiesDialog(
       Dialog.cancelButton({
         label: trans.__('Cancel')
       }),
-      isNewTask
+      !existingTask
         ? FormDialog.createButton({
             label: trans.__('Add Task'),
             canActivate: () => body.isValid()
@@ -38,15 +44,16 @@ export async function showTaskPropertiesDialog(
 }
 
 class TaskPropertiesDialogBody extends ReactWidget {
-  private _taskName: string = '';
-  private _points: number = 0;
+  private readonly _task: E2xGraderMetadata.IE2xGraderTaskMetadata;
+  private _points?: number;
   private _taskNameErrorMessage: string | undefined;
   private _pointsErrorMessage: string | undefined;
   private _isTaskNameTouched: boolean = false;
   private _isPointsTouched: boolean = false;
 
-  constructor(private _trans: TranslationBundle) {
+  constructor(private _notebook: Notebook, private _trans: TranslationBundle, task?: E2xGraderMetadata.IE2xGraderTaskMetadata, private _includePoints: boolean = false) {
     super();
+    this._task = task ?? E2xGraderMetadata.getNewTaskMetadata();
   }
 
   handleTaskNameErrors(errors: string[]): void {
@@ -98,16 +105,22 @@ class TaskPropertiesDialogBody extends ReactWidget {
   protected render(): React.JSX.Element {
     const taskNameInputLabel: string = this._trans.__('Task Name');
     const pointsInputLabel: string = this._trans.__('Points');
+    const parentTaskInputLabel: string = this._trans.__('Parent Task');
+
+    const otherTasks: E2xGraderMetadata.IE2xGraderTaskMetadata[] = findAllTasks(this._notebook);
+    const initialParentTask: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined = otherTasks.find(task => task.id === this._task.parent_id);
+    const otherTaskNames: string[] = otherTasks.map(task => task.name);
+
     return (
       <div className={TASK_PROPERTIES_DIALOG_CLASS + ' e2x-controls'}>
         <div className={'form-group'}>
           <label>{taskNameInputLabel} *</label>
           <TaskNameInput
-            initialName={''}
+            initialName={this._task.name}
             onChange={e => {
-              this._taskName = e;
+              this._task.name = e;
             }}
-            otherTaskNames={[]}
+            otherTaskNames={otherTaskNames}
             onError={e => this.handleTaskNameErrors(e)}
             onTouched={() => this.handleTaskNameTouched()}
           />
@@ -115,7 +128,7 @@ class TaskPropertiesDialogBody extends ReactWidget {
             {this._isTaskNameTouched ? this._taskNameErrorMessage : ''}
           </span>
         </div>
-        <div className={'form-group'}>
+        { this._includePoints ? (<div className={'form-group'}>
           <label>{pointsInputLabel} *</label>
           <PointsInput
             initialPoints={0}
@@ -128,12 +141,16 @@ class TaskPropertiesDialogBody extends ReactWidget {
           <span className={INPUT_VALIDATION_ERROR_SPAN_CLASS}>
             {this._isPointsTouched ? this._pointsErrorMessage : ''}
           </span>
+        </div> ): null}
+        <div className={'form-group'}>
+          <label>{parentTaskInputLabel}</label>
+          <TaskLinkSelector initiallyLinkedTask={initialParentTask} onChange={e => this._task.parent_id = e?.id} tasks={otherTasks}></TaskLinkSelector>
         </div>
       </div>
     );
   }
 
-  getValue(): { taskName: string; points: number } {
-    return { taskName: this._taskName, points: this._points };
+  getValue(): { task: E2xGraderMetadata.IE2xGraderTaskMetadata; points?: number } {
+    return { task: this._task, points: this._points };
   }
 }

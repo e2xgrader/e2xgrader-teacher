@@ -3,6 +3,39 @@
 }
 
 .e2xgrader-TeacherCellToolbar {
+  .task-color-1{
+    background-color: #ebf556;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-2{
+    background-color: #74F556;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-3{
+    background-color: #56F5B0;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-4{
+    background-color: #56C3F5;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-5{
+    background-color: #6056F5;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-6{
+    background-color: #D856F5;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-7{
+    background-color: #f5569b;
+    color: var(--jp-ui-font-color1);
+  }
+  .task-color-8{
+    background-color: #f58856;
+    color: var(--jp-ui-font-color1);
+  }
+
   padding: calc(0.2 * var(--jp-private-toolbar-height));
   min-height: auto;
   width: 100%;
@@ -52,12 +85,21 @@
 
     .e2xgrader-task-name, .e2xgrader-task-link-button {
       border: none;
-      background-color: var(--md-indigo-400);
+      background-color: var(--jp-brand-color1);
       color: white;
     }
 
+    &.colored .e2xgrader-task-name, &.colored .e2xgrader-task-link-button {
+      background-color: inherit !important;
+      color: inherit !important;
+    }
+
     .e2xgrader-task-link-button:hover {
-      background-color: var(--md-indigo-500);
+      background-color: var(--jp-brand-color0);
+    }
+
+    &.colored .e2xgrader-task-link-button:hover {
+      background-color: #00000010 !important;
     }
 
     .e2xgrader-EditIcon{
@@ -111,6 +153,15 @@
 
   .e2xgrader-LockIcon svg {
     filter: brightness(0) invert();
+  }
+
+  .e2xgrader-task-link-button {
+    background-color: white !important;
+    color: var(--jp-brand-color0) !important;
+
+    &:hover {
+      background-color: var(--jp-brand-color3) !important;
+    }
   }
 }
 

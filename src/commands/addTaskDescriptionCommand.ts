@@ -1,7 +1,7 @@
 import { CommandRegistry } from '@lumino/commands';
 import { INotebookTracker, Notebook } from '@jupyterlab/notebook';
 import { TranslationBundle } from '@jupyterlab/translation';
-import { GradingCellModel, /*CellPresets*/ } from '@e2xgrader/core';
+import { GradingCellModel, CellPresets } from '@e2xgrader/core';
 import { getCurrentGradingCell } from '../util/AuthoringCommands';
 
 export class AddTaskDescriptionCommand
@@ -21,7 +21,7 @@ export class AddTaskDescriptionCommand
   };
 
   isEnabled = (args: any): boolean => {
-    return getCurrentGradingCell(this._tracker)?.isSolution ?? false;
+    return getCurrentGradingCell(this._tracker)?.task !== undefined; //only available if the current cell belongs to a task
   };
 
   isVisible = (args: any): boolean => this.isEnabled(args);
@@ -34,12 +34,12 @@ export class AddTaskDescriptionCommand
       return;
     }
     const newCellIndex: number = notebook.activeCellIndex;
-    /*notebook.model?.sharedModel.insertCell(newCellIndex, {
-      ...CellPresets.getTaskDescriptionPreset(currentGradingCell?.id),
+    notebook.model?.sharedModel.insertCell(newCellIndex, {
+      ...CellPresets.getTaskDescriptionPreset(currentGradingCell?.task),
       source: this._trans.__(
         '## Question\n' + '\n' + 'Please write your question here.'
       )
-    });*/
+    });
     notebook.activeCellIndex = newCellIndex;
   };
 }

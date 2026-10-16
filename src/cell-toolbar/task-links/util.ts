@@ -1,5 +1,6 @@
 import {Notebook} from "@jupyterlab/notebook";
 import {E2xGraderMetadata, GradingCellModel} from "@e2xgrader/core";
+import {Cell, ICellModel} from "@jupyterlab/cells";
 
 export function findAllTasks(notebook: Notebook): E2xGraderMetadata.IE2xGraderTaskMetadata[] {
     return notebook.widgets
@@ -12,8 +13,12 @@ function uniqueTaskFilter(value: E2xGraderMetadata.IE2xGraderTaskMetadata, index
     return array.findIndex((task: E2xGraderMetadata.IE2xGraderTaskMetadata) => task.id === value.id) === index; // filter out all task-metadata objects that are not the first occurrence of this task id
 }
 
-export function findTaskCells(notebook: Notebook, taskId: string): GradingCellModel[] {
+export function findTaskGradingCells(notebook: Notebook, taskId: string): GradingCellModel[] {
     return notebook.widgets
         .map(cell => new GradingCellModel(cell.model.sharedModel))
         .filter(cell => cell?.task?.id === taskId);
+}
+
+export function findTaskCells(notebook: Notebook, taskId: string): Cell<ICellModel>[] {
+    return notebook.widgets.filter(cell => new GradingCellModel(cell.model.sharedModel)?.task?.id === taskId);
 }

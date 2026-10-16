@@ -1,7 +1,8 @@
 import { CommandRegistry } from '@lumino/commands';
 import {
-  //CellPresets,
-  //NbGraderAutograding,
+  CellPresets, E2xGraderMetadata,
+  IE2xCellMetadata,
+  NbGraderAutograding,
   NbgraderCellType,
   NbgraderCellTypes
 } from '@e2xgrader/core';
@@ -13,6 +14,7 @@ import { AddTaskDescriptionCommand } from './addTaskDescriptionCommand';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { showTaskPropertiesDialog } from '../taskPropertiesDialog';
 import { Dialog } from '@jupyterlab/apputils';
+import { ICellMetadata } from '@jupyterlab/nbformat';
 
 type jupyterCellTypes = 'code' | 'markdown' | 'raw';
 const INVALID_CELL_TYPE_ERROR_MESSAGE: string = 'ERROR: invalid cell type';
@@ -52,6 +54,12 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
   isVisible = (args: any): boolean => this.isEnabled(args);
 
   execute = async (args: any): Promise<void> => {
+    const notebook: Notebook | undefined =
+      this._tracker.currentWidget?.content;
+    if (!notebook || this.isInvalidArgs(args)) {
+      return;
+    }
+
     const addTask: (
       taskName?: string,
       points?: number
@@ -59,21 +67,20 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
       taskName: string = "",
       points: number = 0
     ) => {
-      const notebook: Notebook | undefined =
-        this._tracker.currentWidget?.content;
-      if (!notebook || this.isInvalidArgs(args)) {
-        return;
-      }
-      /*const cellType: jupyterCellTypes =
+      const cellType: jupyterCellTypes =
         (args as AddNbGraderTaskCommand.IArgs).cellType ??
-        notebook.notebookConfig.defaultCell;*/
+        notebook.notebookConfig.defaultCell;
       const nbGraderCellType:
         | NbgraderCellType.MANUALLY_GRADED_ANSWER
         | NbgraderCellType.AUTOGRADED_ANSWER = (
         args as AddNbGraderTaskCommand.IArgs
       ).nbGraderCellType;
       const newCellIndex: number = notebook.activeCellIndex + 1;
-      /*let source: string;
+
+      const taskMetadata = E2xGraderMetadata.getNewTaskMetadata();
+      taskMetadata.name = taskName;
+
+      let source: string;
       switch (cellType) {
         case 'markdown':
           source = this._trans.__(
@@ -82,7 +89,7 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
           break;
         case 'code':
           source =
-            NbGraderAutograding.SOLUTION_START_SEQUENCE +
+            NbGraderAutograding.SOLUTION_START_DELIMITER +
             '\n' +
             this._trans.__(
               '# Answer\n' +
@@ -90,7 +97,7 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
                 '# Please write your code answer here.\n' +
                 '\n'
             ) +
-            NbGraderAutograding.SOLUTION_END_SEQUENCE;
+            NbGraderAutograding.SOLUTION_END_DELIMITER;
           break;
         case 'raw':
           source = this._trans.__(
@@ -101,14 +108,14 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
       notebook.model?.sharedModel.insertCell(newCellIndex, {
         cell_type: cellType,
         metadata: CellPresets.getCleanMetadata(nbGraderCellType, {
-          taskName,
+          task: taskMetadata,
           points
-        }),
+        }) as ICellMetadata & IE2xCellMetadata,
         source: source
-      });*/
+      });
       notebook.activeCellIndex = newCellIndex;
       if (nbGraderCellType === NbgraderCellType.AUTOGRADED_ANSWER) {
-        await this._app.commands.execute(AddAutograderTestCommand.COMMAND_ID);
+        await this._app.commands.execute(AddAutograderTestCommand.COMMAND_ID, {points: points});
       }
       notebook.activeCellIndex = newCellIndex;
       await this._app.commands.execute(AddTaskDescriptionCommand.COMMAND_ID);
@@ -118,10 +125,10 @@ export class AddNbGraderTaskCommand implements CommandRegistry.ICommandOptions {
     if (
       this._settings.get('show_add_task_properties_dialog').composite as boolean
     ) {
-      return showTaskPropertiesDialog(this._trans, true).then(
-        (result: Dialog.IResult<{ taskName: string; points: number }>) => {
+      return showTaskPropertiesDialog(notebook, this._trans, undefined, true).then(
+        (result: Dialog.IResult<{ task: E2xGraderMetadata.IE2xGraderTaskMetadata; points?: number }>) => {
           if (result.button.accept) {
-            return addTask(result.value!.taskName, result.value!.points);
+            return addTask(result.value!.task.name, result.value!.points);
           }
         }
       );
