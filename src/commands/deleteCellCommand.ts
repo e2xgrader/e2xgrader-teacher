@@ -4,7 +4,7 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 import {INotebookTracker, Notebook} from '@jupyterlab/notebook';
 import { GradingCellModel } from '@e2xgrader/core';
 import {Dialog, showDialog} from "@jupyterlab/apputils";
-import {findTaskCells} from "../cell-toolbar/task-links/util";
+import {findTaskCells} from "../cell-toolbar/util";
 
 export const JUPYTERLAB_DELETE_CELL_COMMAND_ID: string = 'notebook:delete-cell';
 

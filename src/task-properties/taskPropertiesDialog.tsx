@@ -5,12 +5,12 @@ import * as React from 'react';
 import TaskNameInput, {
   TASK_NAME_MAX_LENGTH,
   TASK_NAME_MIN_LENGTH
-} from './cell-toolbar/task-links/TaskNameInput';
-import PointsInput from './cell-toolbar/PointsInput';
-import { FormDialog, showFormDialog } from './FormDialog';
-import TaskLinkSelector from "./cell-toolbar/task-links/TaskLinkSelector";
+} from './control-widgets/TaskNameInput';
+import PointsInput from './control-widgets/PointsInput';
+import { FormDialog, showFormDialog } from '../FormDialog';
+import TaskLinkSelector from "./control-widgets/TaskLinkSelector";
 import {E2xGraderMetadata} from "@e2xgrader/core";
-import {findAllTasks} from "./cell-toolbar/task-links/util";
+import {findAllTasks} from "../cell-toolbar/util";
 import {Notebook} from "@jupyterlab/notebook";
 
 export const TASK_PROPERTIES_DIALOG_CLASS = 'e2x-task-properties-dialog';
@@ -99,6 +99,9 @@ class TaskPropertiesDialogBody extends ReactWidget {
   }
 
   isValid(): boolean {
+    this.handlepointsTouched();
+    this.handleTaskNameTouched();
+    this.update();
     return !this._taskNameErrorMessage && !this._pointsErrorMessage;
   }
 
@@ -107,7 +110,7 @@ class TaskPropertiesDialogBody extends ReactWidget {
     const pointsInputLabel: string = this._trans.__('Points');
     const parentTaskInputLabel: string = this._trans.__('Parent Task');
 
-    const otherTasks: E2xGraderMetadata.IE2xGraderTaskMetadata[] = findAllTasks(this._notebook);
+    const otherTasks: E2xGraderMetadata.IE2xGraderTaskMetadata[] = findAllTasks(this._notebook).filter(task => task.id !== this._task.id);
     const initialParentTask: E2xGraderMetadata.IE2xGraderTaskMetadata | undefined = otherTasks.find(task => task.id === this._task.parent_id);
     const otherTaskNames: string[] = otherTasks.map(task => task.name);
 

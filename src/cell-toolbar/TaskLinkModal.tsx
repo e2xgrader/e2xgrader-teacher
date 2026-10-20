@@ -1,6 +1,6 @@
 import { ReactWidget } from '@jupyterlab/ui-components';
 import React from 'react';
-import TaskLinkSelector from './TaskLinkSelector';
+import TaskLinkSelector from '../task-properties/control-widgets/TaskLinkSelector';
 import {E2xGraderMetadata, GradingCellModel} from '@e2xgrader/core';
 import {Notebook} from "@jupyterlab/notebook";
 import {findAllTasks} from "./util";

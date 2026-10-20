@@ -2,7 +2,7 @@ import { TranslationBundle } from '@jupyterlab/translation';
 import {E2xGraderCellRegistry, E2xGraderMetadata} from '@e2xgrader/core';
 import { CommandRegistry } from '@lumino/commands';
 import { INotebookTracker, Notebook } from '@jupyterlab/notebook';
-import { showTaskPropertiesDialog } from '../taskPropertiesDialog';
+import { showTaskPropertiesDialog } from '../task-properties/taskPropertiesDialog';
 import { Dialog } from '@jupyterlab/apputils';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 const INVALID_CELL_TYPE_ERROR_MESSAGE: string = 'ERROR: invalid cell type';
@@ -48,10 +48,10 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
     }
 
     const addTask: (
-      taskName?: string,
+      task?: E2xGraderMetadata.IE2xGraderTaskMetadata,
       points?: number
     ) => Promise<void> = async (
-      taskName: string = "",
+      task: E2xGraderMetadata.IE2xGraderTaskMetadata = E2xGraderMetadata.getNewTaskMetadata(),
       points: number = 0
     ) => {
       const plugin: E2xGraderCellRegistry.IE2xGraderCellPlugin | undefined =
@@ -64,7 +64,7 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
       const newCellIndex: number = notebook.activeCellIndex + 1;
       notebook.model?.sharedModel.insertCells(
         newCellIndex,
-        plugin.getTaskPreset(taskName, points)
+        plugin.getTaskPreset(task, points)
       );
       notebook.activeCellIndex = newCellIndex;
     };
@@ -72,10 +72,10 @@ export class AddPluginTaskCommand implements CommandRegistry.ICommandOptions {
     if (
       this._settings.get('show_add_task_properties_dialog').composite as boolean
     ) {
-      return showTaskPropertiesDialog(notebook, this._trans).then(
+      return showTaskPropertiesDialog(notebook, this._trans, undefined, true).then(
         (result: Dialog.IResult<{ task: E2xGraderMetadata.IE2xGraderTaskMetadata; points?: number }>) => {
           if (result.button.accept) {
-            return addTask(result.value!.task.name, result.value!.points);
+            return addTask(result.value!.task, result.value!.points);
           }
         }
       );

@@ -12,7 +12,7 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 import { AddAutograderTestCommand } from './addAutograderTestCommand';
 import { AddTaskDescriptionCommand } from './addTaskDescriptionCommand';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { showTaskPropertiesDialog } from '../taskPropertiesDialog';
+import { showTaskPropertiesDialog } from '../task-properties/taskPropertiesDialog';
 import { Dialog } from '@jupyterlab/apputils';
 import { ICellMetadata } from '@jupyterlab/nbformat';
 

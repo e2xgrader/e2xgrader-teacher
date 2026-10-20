@@ -21,11 +21,6 @@ export default function TaskNameInput({
   const [isValidated, setIsValidated] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
 
-  if (!isValidated) {
-    setIsValidated(true);
-    handleValidation(taskName);
-  }
-
   function updateTaskName(newName: string): void {
     setIsTouched(true);
     if (onTouched) {
@@ -53,6 +48,11 @@ export default function TaskNameInput({
     setErrors(newErrors);
     onError(newErrors);
     return newErrors;
+  }
+
+  if (!isValidated) {
+    setIsValidated(true);
+    handleValidation(taskName);
   }
 
   return (

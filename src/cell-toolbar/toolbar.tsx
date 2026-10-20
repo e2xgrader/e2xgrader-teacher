@@ -5,16 +5,16 @@ import {
 } from '@e2xgrader/core';
 import { Toolbar, lockIcon, addIcon, editIcon, linkIcon } from '@jupyterlab/ui-components';
 import { showDialog, Dialog } from '@jupyterlab/apputils';
-import CellTypeSelector from './CellTypeSelector';
+import CellTypeSelector from '../task-properties/control-widgets/CellTypeSelector';
 import React from 'react';
-import PointsInput from './PointsInput';
+import PointsInput from '../task-properties/control-widgets/PointsInput';
 import { Notebook } from '@jupyterlab/notebook';
-import { TaskLinkModal } from './task-links/TaskLinkModal';
+import { TaskLinkModal } from './TaskLinkModal';
 import { TranslationBundle } from '@jupyterlab/translation';
 import { Signal } from '@lumino/signaling';
-import {findTaskGradingCells, findAllTasks} from "./task-links/util";
+import {findTaskGradingCells, findAllTasks} from "./util";
 import {Message} from "@lumino/messaging";
-import {showTaskPropertiesDialog} from "../taskPropertiesDialog";
+import {showTaskPropertiesDialog} from "../task-properties/taskPropertiesDialog";
 
 export const SOLUTION_CELL_CLASS = 'e2xgrader-SolutionCell';
 export const READ_ONLY_CELL_CLASS = 'e2xgrader-ReadOnlyCell';
